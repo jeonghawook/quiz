@@ -3,7 +3,6 @@ name: CI/CD Docker-compose
 on:
   push:
     branches: [master]
-  
 
 jobs:
   test:
@@ -51,7 +50,6 @@ jobs:
         with:
           builder: ${{ steps.buildx.outputs.name }}
           push: true
-          tags: ${{ env.DOCKER_IMAGE }}:${{ env.VERSION }}
         
 
   deploy:
