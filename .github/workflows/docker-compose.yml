@@ -64,4 +64,4 @@ jobs:
       - name: Stop and remove existing containers
         run: docker-compose -f /home/ubuntu/actions-runner/_work/base/base/docker-compose.yml down
       - name: Start services
-        run: docker-compose -f /home/ubuntu/actions-runner/_work/base/base/docker-compose.yml up -d
+        run: docker-compose -f /home/ubuntu/actions-runner/_work/base/base/docker-compose.yml up
