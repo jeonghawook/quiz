@@ -51,6 +51,7 @@ jobs:
         with:
           builder: ${{ steps.buildx.outputs.name }}
           push: true
+          tags: ${{ env.DOCKER_IMAGE }}:${{ env.VERSION }}
         
 
   deploy:
