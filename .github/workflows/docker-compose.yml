@@ -4,7 +4,6 @@ on:
   push:
     branches: [master]
   
-
 jobs:
   test:
     runs-on: ubuntu-latest
@@ -21,7 +20,7 @@ jobs:
           cache: 'npm'
       - run: npm ci
       - run: npm test
-  
+
   build:
     needs: test
     name: Build
@@ -51,8 +50,7 @@ jobs:
         with:
           builder: ${{ steps.buildx.outputs.name }}
           push: true
-          tags: ghcr.io/${{ github.actor }}/cicd:${{ github.sha }}
-        
+          tags: ghcr.io/${{ github.actor }}/base:${{ github.sha }}
 
   deploy:
     needs: build
@@ -61,11 +59,9 @@ jobs:
     steps:
       - name: Check out source code
         uses: actions/checkout@v3
-      - name: Set up Docker Compose CLI
-        uses: docker/compose-cli-action@v1
       - name: Pull Docker images
-        run: docker-compose pull
+        run: docker-compose -f /path/to/docker-compose.yml pull
       - name: Stop and remove existing containers
-        run: docker-compose down
+        run: docker-compose -f /path/to/docker-compose.yml down
       - name: Start services
-        run: docker-compose up -d
+        run: docker-compose -f /path/to/docker-compose.yml up -d
