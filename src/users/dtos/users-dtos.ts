@@ -9,3 +9,8 @@ export class SignupDto {
     userEmail: string;
     password: string;
 }
+
+export class Tokens {
+    accessToken: string;
+    refreshToken: string;
+}

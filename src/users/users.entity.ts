@@ -29,8 +29,4 @@ export class Users {
     @Column({ default: 0 })
     rank: number;
 
-    // @OneToMany(() => Records, (records) => records.users)
-    // @JoinColumn()
-    // records: Records;
-
 }
