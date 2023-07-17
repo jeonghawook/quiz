@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { LoginDto, SignupDto } from './dtos/users-dtos';
 import { UsersRepository } from './users.repository';
-import * as bcrypt from 'bcrypt';
+import * as bcrypt from 'bcryptjs';
 @Injectable()
 export class UsersService {
     private userRepository: UsersRepository

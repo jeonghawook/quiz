@@ -1,0 +1,25 @@
+version: "3.8"
+services:
+
+  nest-app:
+    image: base-dockerized
+    build:
+      dockerfile: Dockerfile
+      context: .
+    depends_on:
+      - mongodb
+    ports:
+      - "3000:3000"
+
+  mongodb:
+    image: "mongo:latest"
+    restart: "always"
+    ports:
+      - "27017:27017"
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: Hawook
+      MONGO_INITDB_ROOT_PASSWORD: 8785
+    volumes:
+      - mongodb_data:/data/db
+volumes:
+  mongodb_data:
