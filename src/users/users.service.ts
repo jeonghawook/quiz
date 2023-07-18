@@ -34,7 +34,7 @@ export class UsersService {
             isActive
         },
             {
-                secret: "life4u",
+                secret: "RTlife4u",
                 expiresIn: '7d'
             }
         )
@@ -49,7 +49,7 @@ export class UsersService {
             isActive
         },
             {
-                secret: "life4u",
+                secret: "ATlife4u", //env 파일에 저장할것
                 expiresIn: '3h'
             }
         )
@@ -58,21 +58,42 @@ export class UsersService {
 
 
     async login(loginDto: LoginDto): Promise<Tokens> {
+
         const { email, password } = loginDto;
+
         const user = await this.userRepository.findEmail(email)
+
         if (!user.userEmail) throw new NotFoundException('존재하지 않는 이메일입니다.');
+
         const passwordMatches = await bcrypt.compare(password, user.password);
+
         if (!passwordMatches) throw new UnauthorizedException('비밀번호가 일치하지 않습니다.');
 
         const tokens = await this.getTokens(user)
 
         // await this.client.set(
-        //     `user:${user.userId}:refresh_token`,
+        //    `${user.userId}:RT`,
         //     tokens.refreshToken,
         // );
-        return
+        return tokens
 
     }
-    logout() { }
-    refreshToken() { }
+    async logout(user: Users) {
+        // await user.userId
+    }
+
+
+    async refreshToken(user: Users, refreshToken: string): Prmoise<string> {
+        let RTfromRedis = await this.client.get(`${user.userId}:RT`)
+        if (!RTfromRedis) {
+            RTfromRedis = await this.userRepository.refreshToken(user.userId)
+            if (!RTfromRedis) throw new UnauthorizedException('다시 로그인해주세요');
+            await this.client.set(`${user.userId}:RT`)
+        }
+        if (!refreshToken === RTfromRedis)
+
+            throw new UnauthorizedException('로그인이 필요합니다.');
+
+        return await this.getAccessToken(user)
+    }
 }
