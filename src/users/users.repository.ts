@@ -21,4 +21,9 @@ export class UsersRepository {
         })
         await this.users.save(user);
     }
+
+    async refreshToken(userId:number): Promise<Users>{
+        return await this.users.findOne({where : {userId}})
+
+    }
 }

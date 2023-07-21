@@ -4,10 +4,14 @@ import { UsersRepository } from './users.repository';
 import * as bcrypt from 'bcryptjs';
 import { Users } from './users.entity';
 import { JwtService } from '@nestjs/jwt';
+import { InjectRedis } from '@liaoliaots/nestjs-redis';
+import { Redis } from 'ioredis';
+
 @Injectable()
 export class UsersService {
     private userRepository: UsersRepository
     private jwtService: JwtService
+    @InjectRedis('notValuable') private readonly client: Redis,
 
 
 
