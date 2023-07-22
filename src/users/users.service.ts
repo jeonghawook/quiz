@@ -1,4 +1,4 @@
-import { Injectable, NotFoundException, UnauthorizedException } from '@nestjs/common';
+import { HttpException, HttpStatus, Injectable, NotFoundException, UnauthorizedException } from '@nestjs/common';
 import { LoginDto, SignupDto, Tokens } from './dtos/users-dtos';
 import { UsersRepository } from './users.repository';
 import * as bcrypt from 'bcryptjs';
@@ -87,17 +87,23 @@ export class UsersService {
     }
 
 
-    async refreshToken(user: Users, refreshToken: string): Prmoise<string> {
+    async refreshToken(user: Users, refreshToken: string): Promise<string> {
         let RTfromRedis = await this.client.get(`${user.userId}:RT`)
         if (!RTfromRedis) {
             RTfromRedis = await this.userRepository.refreshToken(user.userId)
             if (!RTfromRedis) throw new UnauthorizedException('다시 로그인해주세요');
-            await this.client.set(`${user.userId}:RT`)
+            await this.client.set(`${user.userId}:RT`, RTfromRedis)
         }
-        if (!refreshToken === RTfromRedis)
-
-            throw new UnauthorizedException('로그인이 필요합니다.');
-
+        if (refreshToken !== RTfromRedis)
+            
+        throw new HttpException(
+            {
+              status: HttpStatus.UNAUTHORIZED,
+              error: '로그인이 필요합니다.',
+              code: '333', // Add your custom error code here
+            },
+            HttpStatus.UNAUTHORIZED,
+          );
         return await this.getAccessToken(user)
     }
 }
