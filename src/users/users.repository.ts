@@ -22,8 +22,13 @@ export class UsersRepository {
         await this.users.save(user);
     }
 
-    async refreshToken(userId:number): Promise<string>{
-       const user = await this.users.findOne({where : {userId}, select: ['refreshToken']})
-       return user.refreshToken
-       }
+    async refreshToken(userId: number): Promise<string> {
+        const user = await this.users.findOne({ where: { userId }, select: ['refreshToken'] })
+        return user.refreshToken
+    }
+    async removeRefreshToken(userId: number): Promise<void> {
+        await this.users.update({ userId }, { refreshToken: null });
+    }
+
+
 }
