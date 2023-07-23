@@ -64,9 +64,9 @@ export class UsersService {
 
     async login(loginDto: LoginDto): Promise<Tokens> {
 
-        const { email, password } = loginDto;
+        const { userEmail, password } = loginDto;
 
-        const user = await this.userRepository.findEmail(email)
+        const user = await this.userRepository.findEmail(userEmail)
 
         if (!user.userEmail) throw new NotFoundException('존재하지 않는 이메일입니다.');
 
@@ -75,7 +75,7 @@ export class UsersService {
         if (!passwordMatches) throw new UnauthorizedException('비밀번호가 일치하지 않습니다.');
 
         const tokens = await this.getTokens(user)
-
+        await this.userRepository.setRefreshToken(user.userId, tokens.refreshToken)
         await this.client.set(`${user.userId}:RT`, tokens.refreshToken);
         return tokens
 

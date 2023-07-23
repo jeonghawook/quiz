@@ -7,6 +7,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import config from '../configs/typeorm.config';
 import { AtGuard } from 'src/users/common/guards/at.guard';
 import { APP_GUARD } from '@nestjs/core';
+import { InMemoryModule } from 'src/in-memory/in-memory.module';
 
 
 @Module({
@@ -18,6 +19,7 @@ import { APP_GUARD } from '@nestjs/core';
       useClass: AtGuard
     },],
   imports: [UsersModule, MongooseModule.forRoot('mongodb+srv://Hawook:8785@cluster0.olr8a.mongodb.net/?retryWrites=true&w=majority'),
-    TypeOrmModule.forRoot(config)],
+    TypeOrmModule.forRoot(config), InMemoryModule
+  ],
 })
 export class AppModule { }

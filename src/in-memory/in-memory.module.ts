@@ -9,9 +9,10 @@ import { Module } from '@nestjs/common';
             config: [
                 {
                     namespace: 'notValuable',
-                    host: "redis-18535.c267.us-east-1-4.ec2.cloud.redislabs.com",
-                    port: 18535,
-                    password: "KbFBdma9QCj0zuwcQkGcPRVPWh0467jX"
+                    host: "redis-12799.c99.us-east-1-4.ec2.cloud.redislabs.com",
+                    port: 12799
+                    ,
+                    password: "FU2QLrIy9r01vAzFcVFaqFpQGZF20asN"
                 },
             ]
         })

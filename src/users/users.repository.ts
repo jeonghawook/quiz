@@ -7,9 +7,10 @@ import { Users } from "./users.entity";
 Injectable()
 export class UsersRepository {
     constructor(@InjectRepository(Users) private users: Repository<Users>) { }
-    async findEmail(email: string): Promise<Users> {
+    
+    async findEmail(userEmail: string): Promise<Users> {
 
-        return await this.users.findOne({ where: { userEmail: email } });
+        return await this.users.findOne({ where: { userEmail} });
     }
 
     async signup(signupDto: SignupDto, hashedPassword: string): Promise<void> {
@@ -30,5 +31,7 @@ export class UsersRepository {
         await this.users.update({ userId }, { refreshToken: null });
     }
 
-
+    async setRefreshToken(userId: number, refreshToken:string){
+        await this.users.update({userId}, {refreshToken})
+    }
 }

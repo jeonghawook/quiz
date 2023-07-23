@@ -1,4 +1,3 @@
-// import { Records } from 'src/records/records.entity';
 import { Entity, Column, PrimaryGeneratedColumn, Unique, OneToMany, JoinColumn, IntegerType } from 'typeorm';
 
 
@@ -14,7 +13,9 @@ export class Users {
     @Column()
     userName: string;
 
-    @Column(Unique)
+    
+    @Column()
+    @Unique(['userEmail'])
     userEmail: string;
 
     @Column()
