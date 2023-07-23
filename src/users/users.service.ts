@@ -107,8 +107,28 @@ export class UsersService {
                 HttpStatus.UNAUTHORIZED,
             );
         }
-
+        await this.tokenExpiration(user.userId, RTfromRedis)
+        
 
         return await this.getAccessToken(user)
     }
+
+    async tokenExpiration(userId: number, refreshToken:string): Promise<void>{
+        const decodedToken = this.jwtService.verify(refreshToken)
+        const refreshTokenExp=new Date(decodedToken.exp*1000)
+        console.log(refreshTokenExp)
+        if(refreshTokenExp<new Date()){
+             await this.userRepository.removeRefreshToken(userId)
+             await this.client.del(`${userId}:RT`)
+             throw new HttpException(
+                {
+                    status: HttpStatus.UNAUTHORIZED,
+                    error: '로그인이 필요합니다.',
+                    code: '333', // Add your custom error code here
+                },
+                HttpStatus.UNAUTHORIZED,
+            );
+            }      
+    }
+    
 }
