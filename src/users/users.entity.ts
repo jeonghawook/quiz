@@ -8,6 +8,7 @@ export class Users {
     userId: number;
 
     @Column()
+    @Unique(['nickname'])
     nickname: string;
 
     @Column()
