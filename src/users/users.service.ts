@@ -68,7 +68,7 @@ export class UsersService {
 
         const user = await this.userRepository.findEmail(userEmail)
 
-        if (!user.userEmail) throw new NotFoundException('존재하지 않는 이메일입니다.');
+        if (!user) throw new NotFoundException('존재하지 않는 이메일입니다.');
 
         const passwordMatches = await bcrypt.compare(password, user.password);
 
@@ -108,19 +108,19 @@ export class UsersService {
             );
         }
         await this.tokenExpiration(user.userId, RTfromRedis)
-        
+
 
         return await this.getAccessToken(user)
     }
 
-    async tokenExpiration(userId: number, refreshToken:string): Promise<void>{
+    async tokenExpiration(userId: number, refreshToken: string): Promise<void> {
         const decodedToken = this.jwtService.verify(refreshToken)
-        const refreshTokenExp=new Date(decodedToken.exp*1000)
+        const refreshTokenExp = new Date(decodedToken.exp * 1000)
         console.log(refreshTokenExp)
-        if(refreshTokenExp<new Date()){
-             await this.userRepository.removeRefreshToken(userId)
-             await this.client.del(`${userId}:RT`)
-             throw new HttpException(
+        if (refreshTokenExp < new Date()) {
+            await this.userRepository.removeRefreshToken(userId)
+            await this.client.del(`${userId}:RT`)
+            throw new HttpException(
                 {
                     status: HttpStatus.UNAUTHORIZED,
                     error: '로그인이 필요합니다.',
@@ -128,7 +128,7 @@ export class UsersService {
                 },
                 HttpStatus.UNAUTHORIZED,
             );
-            }      
+        }
     }
-    
+
 }
