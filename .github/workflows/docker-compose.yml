@@ -50,7 +50,7 @@ jobs:
         with:
           builder: ${{ steps.buildx.outputs.name }}
           push: true
-          tags: ghcr.io/${{ github.actor }}/base:${{ github.sha }}
+          tags: ghcr.io/${{ github.actor }}/quiz:${{ github.sha }}
 
   deploy:
     needs: build
@@ -60,10 +60,10 @@ jobs:
       - name: Check out source code
         uses: actions/checkout@v3
       - name: Pull Docker images
-        run: docker-compose -f /home/ubuntu/actions-runner/_work/base/base/docker-compose.yml pull
+        run: docker-compose -f /home/ubuntu/actions-runner/_work/quiz/quiz/docker-compose.yml pull
       - name: Stop and remove existing containers
-        run: docker-compose -f /home/ubuntu/actions-runner/_work/base/base/docker-compose.yml down
+        run: docker-compose -f /home/ubuntu/actions-runner/_work/quiz/quiz/docker-compose.yml down
       - name: Start services
-        run: docker-compose -f /home/ubuntu/actions-runner/_work/base/base/docker-compose.yml up -d --build
+        run: docker-compose -f /home/ubuntu/actions-runner/_work/quiz/quiz/docker-compose.yml up -d --build
       - name: Start services
-        run: docker-compose -f /home/ubuntu/actions-runner/_work/base/base/docker-compose.yml up -d
+        run: docker-compose -f /home/ubuntu/actions-runner/_work/quiz/quiz/docker-compose.yml up -d
