@@ -2,7 +2,7 @@ version: "3.8"
 services:
 
   nest-app:
-    image: quiz-dockerized
+    image: base-dockerized
     build:
       dockerfile: Dockerfile
       context: .
