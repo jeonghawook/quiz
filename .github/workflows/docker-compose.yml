@@ -50,7 +50,7 @@ jobs:
         with:
           builder: ${{ steps.buildx.outputs.name }}
           push: true
-          tags: ghcr.io/${{ github.actor }}/base:${{ github.sha }}
+          tags: ghcr.io/${{ github.actor }}/quiz:${{ github.sha }}
 
   deploy:
     needs: build
