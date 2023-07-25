@@ -17,24 +17,19 @@ import { Users } from './users.entity';
 // Mock the UsersService
 class MockUsersService {
     usersRepository: MockUsersRepository;
+  
     constructor(usersRepository: MockUsersRepository) {
       this.usersRepository = usersRepository;
+    }
+  
+    signup(signupDto: SignupDto, hashedPassword: string): Promise<void> {
+      return Promise.resolve();
     }
   }
 
   class MockUsersRepository { 
     constructor() {}
-    signup = jest.fn().mockImplementation((signupDto, hashedPassword) => {
-      if (signupDto.nickname === 'existingNickname') {
-        throw new ConflictException('중복된 닉네임입니다.');
-      }
-  
-      if (signupDto.email === 'existingEmail@example.com') {
-        throw new ConflictException('중복된 이메일입니다.');
-      }
-  
-      return Promise.resolve();
-    });
+
   }
 
 
