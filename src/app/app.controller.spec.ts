@@ -4,7 +4,7 @@ import { AppService } from './app.service';
 
 // Create a mock AppService
 const mockAppService = {
-  getHello: jest.fn(() => 'Hello World!'), // Mock the getHello method
+  getHello: jest.fn(() => 'Hello Worlds!'), // Mock the getHello method
 };
 
 describe('AppController', () => {
