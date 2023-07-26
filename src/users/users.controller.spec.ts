@@ -16,28 +16,28 @@ import { Users } from './users.entity';
 
 // Mock the UsersService
 class MockUsersService {
-    usersRepository: MockUsersRepository;
-  
-    constructor(usersRepository: MockUsersRepository) {
-      this.usersRepository = usersRepository;
-    }
-  
-    signup(signupDto: SignupDto, hashedPassword: string): Promise<void> {
-      return Promise.resolve();
-    }
+  usersRepository: MockUsersRepository;
+
+  constructor(usersRepository: MockUsersRepository) {
+    this.usersRepository = usersRepository;
   }
 
-  class MockUsersRepository { 
-    constructor() {}
-
+  signup(signupDto: SignupDto, hashedPassword: string): Promise<void> {
+    return Promise.resolve();
   }
+}
+
+class MockUsersRepository {
+  constructor() { }
+
+}
 
 
 describe('UsersController (integration)', () => {
   let app: INestApplication;
   let usersService: UsersService;
   let usersRepository: UsersRepository;
-  let usersController:UsersController;
+  let usersController: UsersController;
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
@@ -45,7 +45,7 @@ describe('UsersController (integration)', () => {
       providers: [
         {
           provide: UsersService,
-         useFactory: () => new MockUsersService(new MockUsersRepository()),
+          useFactory: () => new MockUsersService(new MockUsersRepository()),
         },
         {
           provide: UsersRepository,
@@ -59,7 +59,7 @@ describe('UsersController (integration)', () => {
     app = module.createNestApplication();
     await app.init();
   });
-  
+
 
   afterEach(async () => {
     await app.close();
@@ -68,10 +68,10 @@ describe('UsersController (integration)', () => {
   it('should successfully sign up a user', async () => {
     // Mock the signup data
     const signupDto: SignupDto = {
-        nickname: 'Tnickname',
-        userName: 'TuserName',
-        userEmail: 'TuserEmail',
-        password: '12345'
+      nickname: 'Tnickname',
+      userName: 'TuserName',
+      userEmail: 'TuserEmail',
+      password: '12345'
     };
 
     // Mock the signup method of the usersService
