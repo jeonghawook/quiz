@@ -59,8 +59,8 @@ jobs:
     steps:
       - name: Check out source code
         uses: actions/checkout@v3
-      - name: Pull Docker images
-        run: docker-compose -f /home/ubuntu/actions-runner/_work/quiz/quiz/docker-compose.yml pull
+#       - name: Pull Docker images
+#         run: docker-compose -f /home/ubuntu/actions-runner/_work/quiz/quiz/docker-compose.yml pull
       - name: Stop and remove existing containers
         run: docker-compose -f /home/ubuntu/actions-runner/_work/quiz/quiz/docker-compose.yml down
       - name: Start services
