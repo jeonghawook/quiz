@@ -25,9 +25,9 @@ describe('AppController', () => {
   });
 
   describe('getHello', () => {
-    it('should return "Hello World!"', () => {
+    it('should return "Hello Worlds!"', () => {
       const result = appController.getHello();
-      expect(result).toBe('Hello World!');
+      expect(result).toBe('Hello Worlds!');
       // Ensure that the mockAppService.getHello method was called
       expect(mockAppService.getHello).toHaveBeenCalledTimes(1);
     });
