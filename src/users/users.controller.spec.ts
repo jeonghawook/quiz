@@ -1,8 +1,8 @@
-import { ConflictException, HttpStatus, INestApplication } from '@nestjs/common';
+import { ConflictException, HttpStatus, INestApplication, NotFoundException, UnauthorizedException } from '@nestjs/common';
 import { Test, TestingModule } from '@nestjs/testing';
 import { UsersController } from './users.controller';
 import { UsersService } from './users.service';
-import { SignupDto } from './dtos/users-dtos';
+import { LoginDto, SignupDto } from './dtos/users-dtos';
 import { Public } from './common/decorators';
 
 // Import the required modules and dependencies for supertest
@@ -23,9 +23,15 @@ class MockUsersService {
   }
 
   signup(signupDto: SignupDto, hashedPassword: string): Promise<void> {
-   if(signupDto.userEmail==='existingUserEmail') throw new ConflictException('userEmail 중복')
-    
+    if (signupDto.userEmail === 'existingUserEmail') throw new ConflictException('userEmail 중복')
+    if (signupDto.nickname === 'existingNickname') throw new ConflictException('nickname 중복')
     return
+  }
+  login(loginDto: LoginDto): Promise<void> {
+    if (loginDto.userEmail !== 'userEmail') throw new NotFoundException('존재하지 않는 이메일입니다.');
+    if (loginDto.password !== '12345') throw new UnauthorizedException('비밀번호가 일치하지 않습니다.');
+
+    return Promise.resolve();
   }
 }
 
@@ -47,7 +53,7 @@ describe('UsersController (integration)', () => {
       providers: [
         {
           provide: UsersService,
-         useClass: MockUsersService,
+          useClass: MockUsersService,
         },
         {
           provide: UsersRepository,
@@ -83,6 +89,8 @@ describe('UsersController (integration)', () => {
       .post('/users/signup')
       .send(signupDto);
 
+    console.log(response.body)
+
     expect(response.status).toBe(HttpStatus.CREATED);
     expect(response.body).toEqual({ statusCode: HttpStatus.CREATED });
 
@@ -91,13 +99,12 @@ describe('UsersController (integration)', () => {
     expect(usersService.signup).toHaveBeenCalledWith(signupDto);
   });
 
-  it('should handle the conflict scenario', async () => {
-    // Mock the signup data with an existing username (this should trigger a ConflictException)
+  it('1. userEmail duplication error', async () => {
     const signupDto: SignupDto = {
-      nickname: 'Existing User',
-      userName: 'existingUser',
+      nickname: 'Tnickname',
+      userName: 'TuserName',
       userEmail: 'existingUserEmail',
-      password: '12345',
+      password: '12345'
     };
 
     const response = await request(app.getHttpServer())
@@ -107,5 +114,44 @@ describe('UsersController (integration)', () => {
     expect(response.status).toBe(HttpStatus.CONFLICT);
     expect(response.body.message).toBe('userEmail 중복');
   });
-  // Add more test cases to cover different scenarios as needed
+
+  it('1-2. nickname duplication error', async () => {
+    const signupDto: SignupDto = {
+      nickname: 'existingNickname',
+      userName: 'TuserName',
+      userEmail: 'TuserEmail',
+      password: '12345'
+    };
+
+    const response = await request(app.getHttpServer())
+      .post('/users/signup')
+      .send(signupDto);
+
+    expect(response.status).toBe(HttpStatus.CONFLICT);
+    expect(response.body.message).toBe('nickname 중복');
+  });
+
+
+
+  it('2. login success', async () => {
+
+    jest.spyOn(usersService, 'login')
+
+    const loginDto: LoginDto = {
+      userEmail: 'userEmail',
+      password: '12345'
+    };
+
+    const response = await request(app.getHttpServer())
+      .post('/users/login')
+      .send(loginDto);
+
+    console.log(response.body)
+
+    expect(response.status).toBe(HttpStatus.CREATED);
+    expect(response.body).toEqual({});
+
+    expect(usersService.login).toHaveBeenCalledTimes(1);
+    expect(usersService.login).toHaveBeenCalledWith(loginDto);
+  });
 });

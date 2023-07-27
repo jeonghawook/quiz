@@ -22,10 +22,12 @@ export class UsersController {
 
     @Public()
     @Post('/login')
-    async signin(@Body() loginDto: LoginDto): Promise<Tokens> {
+    async login(@Body() loginDto: LoginDto): Promise<Tokens> {
         try {
 
-            return await this.usersService.login(loginDto);
+            const tokens = await this.usersService.login(loginDto);
+
+            return tokens
 
         } catch (error) {
 
