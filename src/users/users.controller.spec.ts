@@ -23,7 +23,9 @@ class MockUsersService {
   }
 
   signup(signupDto: SignupDto, hashedPassword: string): Promise<void> {
-    return Promise.resolve();
+   if(signupDto.userEmail==='existingUserEmail') throw new ConflictException('userEmail 중복')
+    
+    return
   }
 }
 
@@ -45,7 +47,7 @@ describe('UsersController (integration)', () => {
       providers: [
         {
           provide: UsersService,
-          useFactory: () => new MockUsersService(new MockUsersRepository()),
+         useClass: MockUsersService,
         },
         {
           provide: UsersRepository,
@@ -75,7 +77,7 @@ describe('UsersController (integration)', () => {
     };
 
     // Mock the signup method of the usersService
-    jest.spyOn(usersService, 'signup').mockResolvedValueOnce(undefined);
+    jest.spyOn(usersService, 'signup')
 
     const response = await request(app.getHttpServer())
       .post('/users/signup')
@@ -89,5 +91,21 @@ describe('UsersController (integration)', () => {
     expect(usersService.signup).toHaveBeenCalledWith(signupDto);
   });
 
+  it('should handle the conflict scenario', async () => {
+    // Mock the signup data with an existing username (this should trigger a ConflictException)
+    const signupDto: SignupDto = {
+      nickname: 'Existing User',
+      userName: 'existingUser',
+      userEmail: 'existingUserEmail',
+      password: '12345',
+    };
+
+    const response = await request(app.getHttpServer())
+      .post('/users/signup')
+      .send(signupDto);
+
+    expect(response.status).toBe(HttpStatus.CONFLICT);
+    expect(response.body.message).toBe('userEmail 중복');
+  });
   // Add more test cases to cover different scenarios as needed
 });
