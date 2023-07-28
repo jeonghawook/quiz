@@ -22,25 +22,18 @@ class MockUsersService {
     this.usersRepository = usersRepository;
   }
 
-  signup(signupDto: SignupDto, hashedPassword: string): Promise<void> {
+  signup= jest.fn().mockImplementation((signupDto: SignupDto, hashedPassword: string)=> {
     if (signupDto.userEmail === 'existingUserEmail') throw new ConflictException('userEmail 중복')
     if (signupDto.nickname === 'existingNickname') throw new ConflictException('nickname 중복')
-    return
-  }
+    return Promise.resolve()
+  })
 
   login = jest.fn().mockImplementation((loginDto: LoginDto) => {
     if (loginDto.userEmail !== 'userEmail') throw new NotFoundException('존재하지 않는 이메일입니다.');
     if (loginDto.password !== '12345') throw new UnauthorizedException('비밀번호가 일치하지 않습니다.');
-    Promise.resolve({ refreshToken: 'refreshToken', accessToken: 'accessToken' })
+    return Promise.resolve({ refreshToken: 'refreshToken', accessToken: 'accessToken' })
   })
 
-  // async login(loginDto: LoginDto): Promise<Tokens> {
-  //   if (loginDto.userEmail !== 'userEmail') throw new NotFoundException('존재하지 않는 이메일입니다.');
-  //   if (loginDto.password !== '12345') throw new UnauthorizedException('비밀번호가 일치하지 않습니다.');
-  //   const tokens = await this.usersRepository.login(loginDto);
-
-  //   return tokens
-  // }
 }
 
 class MockUsersRepository {
@@ -160,10 +153,11 @@ describe('UsersController (integration)', () => {
       .send(loginDto);
 
 
-    // expect(response.status).toBe(HttpStatus.CREATED);
-    // expect(response.body).toEqual(tokens);
+    expect(response.status).toBe(HttpStatus.CREATED);
+    expect(response.body).toEqual(tokens);
 
-    // expect(usersService.login).toHaveBeenCalledTimes(1);
-    // expect(usersService.login).toHaveBeenCalledWith(loginDto);
+    expect(usersService.login).toHaveBeenCalledTimes(1);
+    expect(usersService.login).toHaveBeenCalledWith(loginDto);
   });
+  
 });
