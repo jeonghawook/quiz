@@ -1,6 +1,8 @@
 import { Injectable } from '@nestjs/common';
 import { QuizRepository } from './quiz.repository';
 import { Quiz } from './quiz.entity';
+import { CreateQuizDto } from './dtos/quiz-dtos';
+import { Users } from 'src/users/users.entity';
 
 @Injectable()
 export class QuizService {
@@ -9,6 +11,11 @@ export class QuizService {
 
     async getQuiz(subject:string, level:number): Promise<Quiz[]>{
         await this.quizRepository.getQuiz(subject, level)
+        return
+    }
+
+    async createQuiz(subject:string,createQuizDto:CreateQuizDto,user:Users):Promise<string>{
+        await this.quizRepository.createQuiz(subject,createQuizDto,user)
         return
     }
 }

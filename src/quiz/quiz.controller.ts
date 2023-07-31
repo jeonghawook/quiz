@@ -26,7 +26,7 @@ export class QuizController {
         @Param('subject') subject: string,
         @Body() createQuizDto: CreateQuizDto
     ): Promise<string> {
-        //const createQuiz = await this.quizService.createQuiz(subject, createQuizDto, user)
+        const createQuiz = await this.quizService.createQuiz(subject, createQuizDto, user)
         return
     }
 

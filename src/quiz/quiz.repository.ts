@@ -31,7 +31,7 @@ export class QuizRepository {
 
   async getQuiz(subject: string, level: number): Promise<Quiz[]> {
     const modelToUse = this.getModel(subject);
-    const quizzes = await modelToUse.find({ js_level: level }).exec();
+    const quizzes = await modelToUse.find({ level }).exec();
     return quizzes;
   }
 }

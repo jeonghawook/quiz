@@ -15,7 +15,7 @@ export class Quiz {
   answer: string;
 
   @Prop()
-  js_level: number;
+  level: number;
 }
 
 export type QuizDocument = Quiz & Document;
