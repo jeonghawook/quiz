@@ -1,9 +1,11 @@
 import { Body, Controller, Get, Param, ParseIntPipe, Post } from '@nestjs/common';
-import { GetUser } from 'src/users/common/decorators';
+import { GetUser, Public } from 'src/users/common/decorators';
 import { QuizService } from './quiz.service';
 import { Quiz } from './quiz.entity';
 import { Users } from 'src/users/users.entity';
 import { CreateQuizDto } from './dtos/quiz-dtos';
+import { QuizValidationPipe } from './pipes/quiz-enums';
+import { QuizSubjects } from './enums/quiz-enums';
 
 @Controller('quiz')
 export class QuizController {
@@ -11,6 +13,8 @@ export class QuizController {
 
 
 
+
+    @Public()
     @Get('/:subject/:level')
     async getQuiz(
         @Param('subject') subject: string,
@@ -23,11 +27,11 @@ export class QuizController {
     @Post('/:subject')
     async createQuiz(
         @GetUser() user: Users,
-        @Param('subject') subject: string,
+        @Param('subject') subject: QuizSubjects,
         @Body() createQuizDto: CreateQuizDto
-    ): Promise<string> {
+    ): Promise<{message : string}> {
         const createQuiz = await this.quizService.createQuiz(subject, createQuizDto, user)
-        return
+        return {message : 'success'}
     }
 
 }

@@ -2,6 +2,8 @@ import { Model } from 'mongoose';
 import { Quiz, QuizDocument } from './quiz.entity';
 import { InjectModel } from '@nestjs/mongoose';
 import { Injectable } from '@nestjs/common';
+import { CreateQuizDto } from './dtos/quiz-dtos';
+import { Users } from 'src/users/users.entity';
 
 @Injectable()
 export class QuizRepository {
@@ -33,5 +35,10 @@ export class QuizRepository {
     const modelToUse = this.getModel(subject);
     const quizzes = await modelToUse.find({ level }).exec();
     return quizzes;
+  }
+
+  async createQuiz(subject:string, createQuizDto: CreateQuizDto, user:Users): Promise<void>{
+    const modelToUse = this.getModel(subject);
+    await modelToUse.create(createQuizDto)
   }
 }

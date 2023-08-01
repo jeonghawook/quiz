@@ -1,4 +1,3 @@
-// quiz.model.ts
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { Document } from 'mongoose';
 
@@ -8,8 +7,8 @@ export class Quiz {
   @Prop()
   question: string;
 
-  @Prop()
-  options: string[];
+  @Prop({ type: Number, enum: [0, 1, 2] })
+  options: number;
 
   @Prop()
   answer: string;
