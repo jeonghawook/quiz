@@ -14,14 +14,18 @@ export class QuizController {
 
 
 
-    @Public()
+  
     @Get('/:subject/:level')
     async getQuiz(
+        @GetUser() user:Users,
         @Param('subject') subject: string,
         @Param('level', ParseIntPipe) level: number
     ): Promise<Quiz[]> {
+        console.log(subject, level)
+        
         const getQuiz = await this.quizService.getQuiz(subject, level)
-        return
+        console.log(getQuiz)
+        return getQuiz
     }
 
     @Post('/:subject')

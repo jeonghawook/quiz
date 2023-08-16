@@ -10,8 +10,8 @@ export class QuizService {
 
 
     async getQuiz(subject:string, level:number): Promise<Quiz[]>{
-        await this.quizRepository.getQuiz(subject, level)
-        return
+      
+        return   await this.quizRepository.getQuiz(subject, level)
     }
 
     async createQuiz(subject:string,createQuizDto:CreateQuizDto,user:Users):Promise<string>{

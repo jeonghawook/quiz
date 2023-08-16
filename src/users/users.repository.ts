@@ -1,4 +1,4 @@
-import { ConflictException, Injectable } from '@nestjs/common';
+import { ConflictException, Injectable, UnauthorizedException } from '@nestjs/common';
 import { LoginDto, SignupDto } from './dtos/users-dtos';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
@@ -22,9 +22,7 @@ export class UsersRepository {
       });
       await this.users.save(user);
     } catch (error) {
-        console.log(error);
-
-        if (error.errno == 1062) 
+         if (error.errno == 1062) 
         if (error.sqlMessage.includes('users.IDX_9047b2d58f91586f14f0cf44a4')) {
             throw new ConflictException('User with this email already exists.');
           } else if (error.sqlMessage.includes('users.IDX_ad02a1be8707004cb805a4b502')) {
@@ -34,11 +32,16 @@ export class UsersRepository {
   }
 
   async refreshToken(userId: number): Promise<string> {
-    const user = await this.users.findOne({
-      where: { userId },
-      select: ['refreshToken'],
-    });
-    return user.refreshToken;
+    try {
+      const user = await this.users.findOne({
+        where: { userId },
+        select: ['refreshToken'],
+      });
+      return user.refreshToken;
+    } catch (error) {
+      throw new UnauthorizedException('다시 로그인해주세요');
+    }
+
   }
   async removeRefreshToken(userId: number): Promise<void> {
     await this.users.update({ userId }, { refreshToken: null });

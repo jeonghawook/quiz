@@ -9,7 +9,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { Users } from './users.entity';
 
 @Module({
-  imports: [JwtModule.register({}),
+  imports: [JwtModule.register({secret:'RTlife4u'}),
     TypeOrmModule.forFeature([Users]),],
   controllers: [UsersController],
   providers: [UsersService,UsersRepository, AtStrategy, RtStrategy]

@@ -55,7 +55,7 @@ export class UsersService {
         },
             {
                 secret: "ATlife4u", //env 파일에 저장할것
-                expiresIn: '3h'
+                expiresIn: '1m'
             }
         )
     }
@@ -73,7 +73,7 @@ export class UsersService {
         const passwordMatches = await bcrypt.compare(password, user.password);
 
         if (!passwordMatches) throw new UnauthorizedException('비밀번호가 일치하지 않습니다.');
-
+        
         const tokens = await this.getTokens(user)
         await this.userRepository.setRefreshToken(user.userId, tokens.refreshToken)
         await this.client.set(`${user.userId}:RT`, tokens.refreshToken);
@@ -87,17 +87,25 @@ export class UsersService {
 
     async refreshToken(user: Users, refreshToken: string): Promise<string> {
         //1.레디스에 없을때 3.기간이 다 됬으떄 4.
+        console.log(1)
+        console.log(user.userId)
         let RTfromRedis = await this.client.get(`${user.userId}:RT`)
         if (!RTfromRedis) {
+            console.log(2)
+
             RTfromRedis = await this.userRepository.refreshToken(user.userId)
+         
             if (!RTfromRedis) throw new UnauthorizedException('다시 로그인해주세요'); //프론트에서도 없애는 방법을 찾아야함
             await this.client.set(`${user.userId}:RT`, RTfromRedis)
         }
         //2.요청과 다를때 
         if (refreshToken !== RTfromRedis) {
+            console.log(3)
+
             await this.client.del(`${user.userId}:RT`)
             await this.userRepository.removeRefreshToken(user.userId)
             //위에 UnauthorizedException으로 해결할수있으면 수정하기
+
             throw new HttpException(
                 {
                     status: HttpStatus.UNAUTHORIZED,
@@ -107,7 +115,9 @@ export class UsersService {
                 HttpStatus.UNAUTHORIZED,
             );
         }
+        console.log(5)
         await this.tokenExpiration(user.userId, RTfromRedis)
+    
 
 
         return await this.getAccessToken(user)

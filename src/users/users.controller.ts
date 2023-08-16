@@ -55,7 +55,8 @@ export class UsersController {
         @GetUser() user: Users)
         : Promise<{ accessToken: string }> {
         try {
-
+console.log("HIT")
+console.log(refreshToken)
             const accessToken = await this.usersService.refreshToken(user, refreshToken);
 
             return { accessToken };
