@@ -25,6 +25,7 @@ export class UsersController {
     async login(@Body() loginDto: LoginDto): Promise<Tokens> {
         try {
 
+            console.log("running")
             const tokens = await this.usersService.login(loginDto);
 
             return tokens
