@@ -34,8 +34,13 @@ export class QuizController {
         @Param('subject') subject: QuizSubjects,
         @Body() createQuizDto: CreateQuizDto
     ): Promise<{message : string}> {
-        const createQuiz = await this.quizService.createQuiz(subject, createQuizDto, user)
-        return {message : 'success'}
+        try {
+            const createQuiz = await this.quizService.createQuiz(subject, createQuizDto, user)
+            return {message : 'success'}
+        } catch (error) {
+            console.log(error)
+        }
+      
     }
 
 }

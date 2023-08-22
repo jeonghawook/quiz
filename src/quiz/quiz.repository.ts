@@ -22,7 +22,7 @@ export class QuizRepository {
       case 'nodejs':
         modelToUse = this.nodejsModel;
         break;
-      case 'personel':
+      case 'personnel':
         modelToUse = this.personelModel;
         break;
       default:
