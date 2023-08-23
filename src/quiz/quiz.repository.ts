@@ -31,10 +31,16 @@ export class QuizRepository {
     return modelToUse;
   }
 
-  async getQuiz(subject: string, level: number): Promise<Quiz[]> {
+  async getQuiz(subject: string, level: number, user: Users): Promise<Quiz[]> {
     const modelToUse = this.getModel(subject);
-    const quizzes = await modelToUse.find({ level }).exec();
-    return quizzes;
+    
+    const query = (subject === "personnel")
+    ? { level, userId: user.userId }
+    : { level };
+  
+  const quizzes = await modelToUse.find(query).exec();
+  return quizzes;
+
   }
 
   async createQuiz(subject:string, createQuizDto: CreateQuizDto, user:Users): Promise<void>{

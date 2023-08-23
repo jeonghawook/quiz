@@ -23,7 +23,7 @@ export class QuizController {
     ): Promise<Quiz[]> {
         console.log(subject, level)
         
-        const getQuiz = await this.quizService.getQuiz(subject, level)
+        const getQuiz = await this.quizService.getQuiz(subject, level, user)
         console.log(getQuiz)
         return getQuiz
     }
