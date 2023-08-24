@@ -33,7 +33,7 @@ export class QuizRepository {
 
   async getQuiz(subject: string, level: number, user: Users): Promise<Quiz[]> {
     const modelToUse = this.getModel(subject);
-    
+
     const query = (subject === "personnel")
     ? { level, userId: user.userId }
     : { level };
@@ -45,6 +45,7 @@ export class QuizRepository {
 
   async createQuiz(subject:string, createQuizDto: CreateQuizDto, user:Users): Promise<void>{
     const modelToUse = this.getModel(subject);
+    createQuizDto.userId = user.userId;
     await modelToUse.create(createQuizDto)
   }
 }
