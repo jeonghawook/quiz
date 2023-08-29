@@ -15,6 +15,10 @@ export class Quiz {
 
   @Prop()
   level: number;
+
+  @Prop()
+  userId:number;
+
 }
 
 export type QuizDocument = Quiz & Document;
