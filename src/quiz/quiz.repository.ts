@@ -8,9 +8,9 @@ import { Users } from 'src/users/users.entity';
 @Injectable()
 export class QuizRepository {
   constructor(
-    @InjectModel('javascript') private javascriptModel: Model<QuizDocument>,
+    @InjectModel('javascripts') private javascriptModel: Model<QuizDocument>,
     @InjectModel('nodejs') private nodejsModel: Model<QuizDocument>,
-    @InjectModel('personel') private personelModel: Model<QuizDocument>,
+    @InjectModel('personels') private personelModel: Model<QuizDocument>,
   ) {}
 
   getModel(subject: string): Model<QuizDocument> {

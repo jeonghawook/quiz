@@ -9,9 +9,9 @@ import { Users } from 'src/users/users.entity';
 
 @Module({
   imports:[  MongooseModule.forFeature([
-      { name: 'javascript', schema: QuizSchema }, // Assuming you have 'javascript' as the collection name for that model
+      { name: 'javascripts', schema: QuizSchema }, // Assuming you have 'javascript' as the collection name for that model
       { name: 'nodejs', schema: QuizSchema },
-      { name: 'personel', schema: QuizSchema },
+      { name: 'personels', schema: QuizSchema },
       
     ]), TypeOrmModule.forFeature([Users])],
   controllers: [QuizController],
