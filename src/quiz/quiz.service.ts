@@ -11,7 +11,7 @@ export class QuizService {
 
     async getQuiz(subject:string, level:number, user:Users): Promise<Quiz[]>{
       
-        return   await this.quizRepository.getQuiz(subject, level, user)
+        return await this.quizRepository.getQuiz(subject, level, user)
     }
 
     async createQuiz(subject:string,createQuizDto:CreateQuizDto,user:Users):Promise<string>{

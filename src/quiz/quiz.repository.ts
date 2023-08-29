@@ -46,6 +46,7 @@ export class QuizRepository {
   async createQuiz(subject:string, createQuizDto: CreateQuizDto, user:Users): Promise<void>{
     const modelToUse = this.getModel(subject);
     createQuizDto.userId = user.userId;
+    console.log(createQuizDto)
     await modelToUse.create(createQuizDto)
   }
 }
