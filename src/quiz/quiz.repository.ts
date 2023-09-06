@@ -1,4 +1,4 @@
-import mongoose, { Model, ObjectId } from 'mongoose';
+import mongoose, { Model } from 'mongoose';
 import { Quiz, QuizDocument } from './quiz.entity';
 import { InjectModel } from '@nestjs/mongoose';
 import { Injectable } from '@nestjs/common';
@@ -58,10 +58,9 @@ export class QuizRepository {
     subject: string,
     level: Number,
     user: Users,
-    quizId: string, //64f857497504754293f05a3a
+    quizId: string,
   ) {
     const modelToUse = this.getModel(subject);
-    const quizObjectId = new mongoose.Types.ObjectId(quizId);
     const query =
       subject === 'personnel'
         ? { level, userId: user.userId, _id: quizId }
