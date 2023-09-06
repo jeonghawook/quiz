@@ -43,17 +43,17 @@ export class QuizController {
             
     }
 
-    @Delete('/:subject/:level')
-    async deleteQuiz(
-        @GetUser() user:Users,
-        @Param('subject') subject: QuizSubjects,
-       @Param('level') level : Number
-    ): Promise<any>{
-        try {
-         await this.quizService.deleteQuiz(subject,level)
-        } catch (error) {
-            console.log(error)
-        }
-    }
+    // @Delete('/:subject/:level')
+    // async deleteQuiz(
+    //     @GetUser() user:Users,
+    //     @Param('subject') subject: QuizSubjects,
+    //    @Param('level') level : Number
+    // ): Promise<any>{
+    //     try {
+    //      await this.quizService.deleteQuiz(subject,level)
+    //     } catch (error) {
+    //         console.log(error)
+    //     }
+    // }
 
 }
