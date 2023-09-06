@@ -1,4 +1,4 @@
-import { Model ,ObjectId} from 'mongoose';
+import mongoose, { Model, ObjectId } from 'mongoose';
 import { Quiz, QuizDocument } from './quiz.entity';
 import { InjectModel } from '@nestjs/mongoose';
 import { Injectable } from '@nestjs/common';
@@ -13,7 +13,7 @@ export class QuizRepository {
     @InjectModel('javascripts') private javascriptModel: Model<QuizDocument>,
     @InjectModel('nodejs') private nodejsModel: Model<QuizDocument>,
     @InjectModel('personels') private personelModel: Model<QuizDocument>,
-  ) {}
+  ) { }
 
   getModel(subject: string): Model<QuizDocument> {
     let modelToUse: Model<QuizDocument>;
@@ -61,7 +61,7 @@ export class QuizRepository {
     quizId: string, //64f857497504754293f05a3a
   ) {
     const modelToUse = this.getModel(subject);
-    const quizObjectId = new ObjectId(quizId);
+    const quizObjectId = new mongoose.Types.ObjectId(quizId);
     const query =
       subject === 'personnel'
         ? { level, userId: user.userId, _id: quizId }
