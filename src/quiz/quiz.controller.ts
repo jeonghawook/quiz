@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Param, ParseIntPipe, Post } from '@nestjs/common';
+import { Body, Controller, Delete, Get, Param, ParseIntPipe, Post } from '@nestjs/common';
 import { GetUser, Public } from 'src/users/common/decorators';
 import { QuizService } from './quiz.service';
 import { Quiz } from './quiz.entity';
@@ -40,7 +40,20 @@ export class QuizController {
         } catch (error) {
             console.log(error)
         }
-      
+            
+    }
+
+    @Delete('/:subject/:level')
+    async deleteQuiz(
+        @GetUser() user:Users,
+        @Param('subject') subject: QuizSubjects,
+       @Param('level') level : Number
+    ): Promise<any>{
+        try {
+         await this.quizService.deleteQuiz(subject,level)
+        } catch (error) {
+            console.log(error)
+        }
     }
 
 }

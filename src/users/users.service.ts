@@ -86,19 +86,17 @@ export class UsersService {
 
 
     async refreshToken(user: Users, refreshToken: string): Promise<string> {
-        //1.레디스에 없을때 3.기간이 다 됬으떄 4.
-        console.log(1)
-        console.log(user.userId)
+        //1.레디스에 없을때 
         let RTfromRedis = await this.client.get(`${user.userId}:RT`)
         if (!RTfromRedis) {
-            console.log(2)
-
+        
             RTfromRedis = await this.userRepository.refreshToken(user.userId)
          
             if (!RTfromRedis) throw new UnauthorizedException('다시 로그인해주세요'); //프론트에서도 없애는 방법을 찾아야함
             await this.client.set(`${user.userId}:RT`, RTfromRedis)
         }
         //2.요청과 다를때 
+        console.log(refreshToken , RTfromRedis)
         if (refreshToken !== RTfromRedis) {
             console.log(3)
 
@@ -110,12 +108,12 @@ export class UsersService {
                 {
                     status: HttpStatus.UNAUTHORIZED,
                     error: '로그인이 필요합니다.',
-                    code: '333', // Add your custom error code here
+                    code: '333', 
                 },
                 HttpStatus.UNAUTHORIZED,
             );
         }
-        console.log(5)
+      //3.기간이 확인
         await this.tokenExpiration(user.userId, RTfromRedis)
     
 
@@ -134,7 +132,7 @@ export class UsersService {
                 {
                     status: HttpStatus.UNAUTHORIZED,
                     error: '로그인이 필요합니다.',
-                    code: '333', // Add your custom error code here
+                    code: '333', 
                 },
                 HttpStatus.UNAUTHORIZED,
             );
