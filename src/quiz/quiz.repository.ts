@@ -1,9 +1,11 @@
-import { Model } from 'mongoose';
+import { Model ,ObjectId} from 'mongoose';
 import { Quiz, QuizDocument } from './quiz.entity';
 import { InjectModel } from '@nestjs/mongoose';
 import { Injectable } from '@nestjs/common';
 import { CreateQuizDto } from './dtos/quiz-dtos';
 import { Users } from 'src/users/users.entity';
+import { QuizSubjects } from './enums/quiz-enums';
+
 
 @Injectable()
 export class QuizRepository {
@@ -34,19 +36,37 @@ export class QuizRepository {
   async getQuiz(subject: string, level: number, user: Users): Promise<Quiz[]> {
     const modelToUse = this.getModel(subject);
 
-    const query = (subject === "personnel")
-    ? { level, userId: user.userId }
-    : { level };
-  
-  const quizzes = await modelToUse.find(query).exec();
-  return quizzes;
+    const query =
+      subject === 'personnel' ? { level, userId: user.userId } : { level };
 
+    const quizzes = await modelToUse.find(query).exec();
+    return quizzes;
   }
 
-  async createQuiz(subject:string, createQuizDto: CreateQuizDto, user:Users): Promise<void>{
+  async createQuiz(
+    subject: string,
+    createQuizDto: CreateQuizDto,
+    user: Users,
+  ): Promise<void> {
     const modelToUse = this.getModel(subject);
     createQuizDto.userId = user.userId;
-    console.log(createQuizDto)
-    await modelToUse.create(createQuizDto)
+    console.log(createQuizDto);
+    await modelToUse.create(createQuizDto);
+  }
+
+  async deleteQuiz(
+    subject: string,
+    level: Number,
+    user: Users,
+    quizId: string, //64f857497504754293f05a3a
+  ) {
+    const modelToUse = this.getModel(subject);
+    const quizObjectId = new ObjectId(quizId);
+    const query =
+      subject === 'personnel'
+        ? { level, userId: user.userId, _id: quizId }
+        : { level, _id: quizId };
+
+    await modelToUse.deleteOne(query);
   }
 }

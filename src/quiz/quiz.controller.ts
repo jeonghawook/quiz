@@ -18,7 +18,7 @@ export class QuizController {
     @Get('/:subject/:level')
     async getQuiz(
         @GetUser() user:Users,
-        @Param('subject') subject: string,
+        @Param('subject') subject: QuizSubjects,
         @Param('level', ParseIntPipe) level: number
     ): Promise<Quiz[]> {
         console.log(subject, level)
@@ -43,17 +43,18 @@ export class QuizController {
             
     }
 
-    // @Delete('/:subject/:level')
-    // async deleteQuiz(
-    //     @GetUser() user:Users,
-    //     @Param('subject') subject: QuizSubjects,
-    //    @Param('level') level : Number
-    // ): Promise<any>{
-    //     try {
-    //      await this.quizService.deleteQuiz(subject,level)
-    //     } catch (error) {
-    //         console.log(error)
-    //     }
-    // }
+    @Delete('/:subject/:level/:quizId')
+    async deleteQuiz(
+        @GetUser() user:Users,
+        @Param('subject') subject: QuizSubjects,
+        @Param('level') level : Number,
+        @Param('quizId') quizId: string
+    ): Promise<any>{
+        try {
+         await this.quizService.deleteQuiz(subject,level,user,quizId)
+        } catch (error) {
+            console.log(error)
+        }
+    }
 
 }
