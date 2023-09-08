@@ -139,4 +139,18 @@ export class UsersService {
         }
     }
 
+
+    async socialLogin(nickname: string, userEmail:string):Promise<Tokens>{
+        let user = await this.userRepository.findEmail(userEmail)
+        if(!user){
+           user= await this.userRepository.socialSignUp(userEmail, nickname)
+        }
+
+        const tokens = await this.getTokens(user)
+        await this.userRepository.setRefreshToken(user.userId, tokens.refreshToken)
+        await this.client.set(`${user.userId}:RT`, tokens.refreshToken);
+        return tokens 
+
+    }
+
 }

@@ -6,6 +6,15 @@ import { Users } from './users.entity';
 
 Injectable();
 export class UsersRepository {
+  async socialSignUp(userEmail: string, nickname: string) {
+      try {
+      const user = this.users.create({userEmail: userEmail, nickname:nickname})  
+      await this.users.save(user)
+      return user
+      } catch (error) {
+        
+      }
+  }
   constructor(@InjectRepository(Users) private users: Repository<Users>) {}
 
   async findEmail(userEmail: string): Promise<Users> {

@@ -7,11 +7,12 @@ import { JwtModule } from '@nestjs/jwt';
 import { UsersRepository } from './users.repository';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { Users } from './users.entity';
+import { KakaoStrategy } from './strategies/kakao.st';
 
 @Module({
   imports: [JwtModule.register({secret:'RTlife4u'}),
     TypeOrmModule.forFeature([Users]),],
   controllers: [UsersController],
-  providers: [UsersService,UsersRepository, AtStrategy, RtStrategy]
+  providers: [UsersService,UsersRepository, AtStrategy, RtStrategy,KakaoStrategy],
 })
 export class UsersModule { }
