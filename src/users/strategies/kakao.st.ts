@@ -6,7 +6,7 @@ import { Strategy } from 'passport-kakao';
 export class KakaoStrategy extends PassportStrategy(Strategy) {
   constructor() {
     super({
-      clientID: '800b8fe2427efbffbef3bc6fe96a5464',
+      clientID: '8ffafcf35ddb5077a2c8b940e4b01da1',
       clientSecret: 'WWyIRm0zec63gzKzSiZYEYgrLIYxbFGq',
       callbackURL: 'https://pocom.shop/users/kakao/callback',
     });
