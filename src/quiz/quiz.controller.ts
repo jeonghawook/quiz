@@ -28,6 +28,20 @@ export class QuizController {
         return getQuiz
     }
 
+    @Get('/list/:subject/:level')
+    async getQuizList(
+        @GetUser() user:Users,
+        @Param('subject') subject: QuizSubjects,
+        @Param('level', ParseIntPipe) level: number
+    ): Promise<Quiz[]> {
+        console.log(subject, level)
+        
+        const getQuizList = await this.quizService.getQuizList(subject, level, user)
+        console.log(getQuizList)
+        return getQuizList
+    }
+
+
     @Post('/:subject')
     async createQuiz(
         @GetUser() user: Users,

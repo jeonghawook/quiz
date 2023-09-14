@@ -17,6 +17,15 @@ export class QuizService {
     return await this.quizRepository.getQuiz(subject, level, user);
   }
 
+
+  async getQuizList(
+    subject: QuizSubjects,
+    level: number,
+    user: Users,
+  ): Promise<Quiz[]> {
+    return await this.quizRepository.getQuizList(subject, level, user);
+  }
+
   async createQuiz(
     subject: QuizSubjects,
     createQuizDto: CreateQuizDto,

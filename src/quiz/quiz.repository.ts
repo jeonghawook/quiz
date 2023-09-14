@@ -43,6 +43,17 @@ export class QuizRepository {
     return quizzes;
   }
 
+  async getQuizList(subject: string, level: number, user: Users): Promise<Quiz[]> {
+    const modelToUse = this.getModel(subject);
+
+    const query =
+      subject === 'personnel' ? { level, userId: user.userId } : { level };
+
+    const quizzes = await modelToUse.find(query).select('_id question').exec();
+    return quizzes;
+  }
+
+
   async createQuiz(
     subject: string,
     createQuizDto: CreateQuizDto,
