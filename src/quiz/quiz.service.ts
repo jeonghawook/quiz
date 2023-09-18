@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { QuizRepository } from './quiz.repository';
 import { Quiz } from './quiz.entity';
-import { CreateQuizDto } from './dtos/quiz-dtos';
+import { CreateQuizDto, UpdateQuizDto } from './dtos/quiz-dtos';
 import { Users } from 'src/users/users.entity';
 import { QuizSubjects } from './enums/quiz-enums';
 
@@ -42,6 +42,18 @@ export class QuizService {
     quizId: string,
   ): Promise<string> {
     await this.quizRepository.deleteQuiz(subject, level, user, quizId);
+    return;
+  }
+
+
+  async updateQuiz(
+    subject: QuizSubjects,
+    level: Number,
+    user: Users,
+    quizId: string,
+    updateQuizDto: UpdateQuizDto
+  ): Promise<string> {
+    await this.quizRepository.updateQuiz(subject, level, user, quizId, updateQuizDto);
     return;
   }
 }

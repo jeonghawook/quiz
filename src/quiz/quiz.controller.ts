@@ -1,10 +1,9 @@
-import { Body, Controller, Delete, Get, Param, ParseIntPipe, Post } from '@nestjs/common';
+import { Body, Controller, Delete, Get, Param, ParseIntPipe, Patch, Post } from '@nestjs/common';
 import { GetUser, Public } from 'src/users/common/decorators';
 import { QuizService } from './quiz.service';
 import { Quiz } from './quiz.entity';
 import { Users } from 'src/users/users.entity';
-import { CreateQuizDto } from './dtos/quiz-dtos';
-import { QuizValidationPipe } from './pipes/quiz-enums';
+import { CreateQuizDto, UpdateQuizDto } from './dtos/quiz-dtos';
 import { QuizSubjects } from './enums/quiz-enums';
 
 @Controller('quiz')
@@ -63,11 +62,27 @@ export class QuizController {
         @Param('subject') subject: QuizSubjects,
         @Param('level') level : Number,
         @Param('quizId') quizId: string
-    ): Promise<any>{
+    ): Promise<void>{
         try {
          await this.quizService.deleteQuiz(subject,level,user,quizId)
         } catch (error) {
             console.log(error)
+        }
+    }
+
+    @Patch('/:subject/:level/:quizId')
+    async updateQuiz(
+        @GetUser() user:Users,
+        @Param('subject') subject: QuizSubjects,
+        @Param('level') level : Number,
+        @Param('quizId') quizId: string,
+        @Body() updateQuizDto: UpdateQuizDto 
+    ): Promise<void>{
+        try {
+            await this.quizService.updateQuiz(subject,level,user,quizId,updateQuizDto)
+        } catch (error) {
+            console.log(error)
+            
         }
     }
 

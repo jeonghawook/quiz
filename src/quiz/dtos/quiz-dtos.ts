@@ -7,3 +7,9 @@ export class CreateQuizDto {
     option :string[]
     userId : number
 }
+
+export class UpdateQuizDto{
+    question: string
+    answer:string
+    userId: number
+}

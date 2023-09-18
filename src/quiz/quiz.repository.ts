@@ -2,7 +2,7 @@ import mongoose, { Model } from 'mongoose';
 import { Quiz, QuizDocument } from './quiz.entity';
 import { InjectModel } from '@nestjs/mongoose';
 import { Injectable } from '@nestjs/common';
-import { CreateQuizDto } from './dtos/quiz-dtos';
+import { CreateQuizDto, UpdateQuizDto } from './dtos/quiz-dtos';
 import { Users } from 'src/users/users.entity';
 import { QuizSubjects } from './enums/quiz-enums';
 
@@ -79,4 +79,25 @@ export class QuizRepository {
 
     await modelToUse.deleteOne(query);
   }
+
+  async updateQuiz(
+    subject: string,
+    level: number,
+    user: Users,
+    quizId: string,
+    updateQuizDto: UpdateQuizDto
+  ) {
+    const question = updateQuizDto.question;
+    const answer = updateQuizDto.answer;
+    const modelToUse = this.getModel(subject);
+    const query =
+      subject === 'personnel'
+        ? { level, userId: user.userId, _id: quizId }
+        : { level, _id: quizId };
+  
+    const updateOperation = { $set: updateQuizDto }; 
+  
+    await modelToUse.findOneAndUpdate(query, updateOperation);
+  }
+  
 }
