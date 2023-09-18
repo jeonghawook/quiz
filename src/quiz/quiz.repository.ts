@@ -82,7 +82,7 @@ export class QuizRepository {
 
   async updateQuiz(
     subject: string,
-    level: number,
+    level: Number,
     user: Users,
     quizId: string,
     updateQuizDto: UpdateQuizDto
