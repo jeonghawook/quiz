@@ -31,4 +31,9 @@ export class Users {
     @Column({ default: 0 })
     rank: number;
 
+    @Column({default: false})
+    isAdmin : boolean
+    
+    @Column({ type: 'json', nullable: true }) // Store focus as JSON
+    focus: string[] | null;
 }
