@@ -85,7 +85,7 @@ export class UsersController {
   @Get('/kakao/callback')
   @UseGuards(AuthGuard('kakao'))
   async kakaoLoginCallback(@Req() req) {
-    console.log(req.user.profile.nickname);
+    console.log(req.user);
     const nickname = req.user.profile.nickname;
     const userEmail = req.user.email;
     const tokens = await this.usersService.socialLogin(nickname, userEmail);
