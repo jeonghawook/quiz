@@ -72,4 +72,4 @@
 <br>
 
 ## **FE에서 화면 보기**
- [FRONTEND GIT으로 바로가기 ! ](https://github.com/jeonghawook/CommunityFrontend)
+ [FRONTEND GIT으로 바로가기 ! ](https://github.com/jeonghawook/quizFront)
