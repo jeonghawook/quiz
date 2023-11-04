@@ -63,7 +63,8 @@
  </td>
   </tr>
 </table>
-[조금 선택에 자세한 이유 !](https://velog.io/@saro3/%ED%94%84%EB%A1%9C%EC%A0%9D%ED%8A%B8-FlashCard)
+
+[선택에 자세한 이유 !](https://velog.io/@saro3/%ED%94%84%EB%A1%9C%EC%A0%9D%ED%8A%B8-FlashCard)
 
 ## **트러블슈팅** 
 [카카오 로그인 트러블 ! ](https://velog.io/@saro3/%EC%B9%B4%EC%B9%B4%EC%98%A4-%EB%A1%9C%EA%B7%B8%EC%9D%B8-%EA%B3%BC%EC%A0%95)
