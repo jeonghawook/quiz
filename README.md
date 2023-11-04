@@ -15,7 +15,7 @@
 <table>
   <tr>
   <td>CI/CD</td>
-  <td>채팅</td>
+  <td></td>
  
  </tr>
  <tr>
