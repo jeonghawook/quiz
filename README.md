@@ -56,6 +56,12 @@
     <td>- 다양한 보안중 brute force에 대응하기 위해 선정<br />
  </td>
   </tr>
+    <tr>
+    <td><strong>MySQL</strong></td>
+    <td>- 유저에 대한 정보는 relational 할 예정
+      - 틀린 문제 / 유저 프로필 연결 예정<br />
+ </td>
+  </tr>
 </table>
 
 ## **트러블슈팅** 
