@@ -58,8 +58,8 @@
   </tr>
     <tr>
     <td><strong>MySQL</strong></td>
-    <td>- 유저에 대한 정보는 relational 할 예정
-      - 틀린 문제 / 유저 프로필 연결 예정<br />
+    <td>- 유저에 대한 정보는 relational 할 예정<br />
+      - 틀린 문제 / 유저 프로필 연결 예정
  </td>
   </tr>
 </table>
