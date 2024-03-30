@@ -1,4 +1,10 @@
-import { ConflictException, HttpStatus, INestApplication, NotFoundException, UnauthorizedException } from '@nestjs/common';
+import {
+  ConflictException,
+  HttpStatus,
+  INestApplication,
+  NotFoundException,
+  UnauthorizedException,
+} from '@nestjs/common';
 import { Test, TestingModule } from '@nestjs/testing';
 import { UsersController } from './users.controller';
 import { UsersService } from './users.service';
@@ -12,7 +18,7 @@ import { RtStrategy } from './strategies/refreshtoken.st';
 import { UsersRepository } from './users.repository';
 import { JwtModule } from '@nestjs/jwt';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { Users } from './users.entity';
+import { Users } from './entity/users.entity';
 
 // Mock the UsersService
 class MockUsersService {
@@ -22,26 +28,31 @@ class MockUsersService {
     this.usersRepository = usersRepository;
   }
 
-  signup= jest.fn().mockImplementation((signupDto: SignupDto, hashedPassword: string)=> {
-    if (signupDto.userEmail === 'existingUserEmail') throw new ConflictException('userEmail 중복')
-    if (signupDto.nickname === 'existingNickname') throw new ConflictException('nickname 중복')
-    return Promise.resolve()
-  })
+  signup = jest
+    .fn()
+    .mockImplementation((signupDto: SignupDto, hashedPassword: string) => {
+      if (signupDto.userEmail === 'existingUserEmail')
+        throw new ConflictException('userEmail 중복');
+      if (signupDto.nickname === 'existingNickname')
+        throw new ConflictException('nickname 중복');
+      return Promise.resolve();
+    });
 
   login = jest.fn().mockImplementation((loginDto: LoginDto) => {
-    if (loginDto.userEmail !== 'userEmail') throw new NotFoundException('존재하지 않는 이메일입니다.');
-    if (loginDto.password !== '12345') throw new UnauthorizedException('비밀번호가 일치하지 않습니다.');
-    return Promise.resolve({ refreshToken: 'refreshToken', accessToken: 'accessToken' })
-  })
-
+    if (loginDto.userEmail !== 'userEmail')
+      throw new NotFoundException('존재하지 않는 이메일입니다.');
+    if (loginDto.password !== '12345')
+      throw new UnauthorizedException('비밀번호가 일치하지 않습니다.');
+    return Promise.resolve({
+      refreshToken: 'refreshToken',
+      accessToken: 'accessToken',
+    });
+  });
 }
 
 class MockUsersRepository {
-  constructor() { }
-
+  constructor() {}
 }
-
-
 
 describe('UsersController (integration)', () => {
   let app: INestApplication;
@@ -70,7 +81,6 @@ describe('UsersController (integration)', () => {
     await app.init();
   });
 
-
   afterEach(async () => {
     await app.close();
   });
@@ -81,17 +91,15 @@ describe('UsersController (integration)', () => {
       nickname: 'Tnickname',
       userName: 'TuserName',
       userEmail: 'TuserEmail',
-      password: '12345'
+      password: '12345',
     };
 
     // Mock the signup method of the usersService
-    jest.spyOn(usersService, 'signup')
+    jest.spyOn(usersService, 'signup');
 
     const response = await request(app.getHttpServer())
       .post('/users/signup')
       .send(signupDto);
-
-    //console.log(response.body)
 
     expect(response.status).toBe(HttpStatus.CREATED);
     expect(response.body).toEqual({ statusCode: HttpStatus.CREATED });
@@ -106,7 +114,7 @@ describe('UsersController (integration)', () => {
       nickname: 'Tnickname',
       userName: 'TuserName',
       userEmail: 'existingUserEmail',
-      password: '12345'
+      password: '12345',
     };
 
     const response = await request(app.getHttpServer())
@@ -122,7 +130,7 @@ describe('UsersController (integration)', () => {
       nickname: 'existingNickname',
       userName: 'TuserName',
       userEmail: 'TuserEmail',
-      password: '12345'
+      password: '12345',
     };
 
     const response = await request(app.getHttpServer())
@@ -133,25 +141,21 @@ describe('UsersController (integration)', () => {
     expect(response.body.message).toBe('nickname 중복');
   });
 
-
-
   it('2. login success', async () => {
-
-    jest.spyOn(usersService, 'login')
+    jest.spyOn(usersService, 'login');
 
     const loginDto: LoginDto = {
       userEmail: 'userEmail',
-      password: '12345'
+      password: '12345',
     };
     const tokens: Tokens = {
       refreshToken: 'refreshToken',
-      accessToken: 'accessToken'
-    }
+      accessToken: 'accessToken',
+    };
 
     const response = await request(app.getHttpServer())
       .post('/users/login')
       .send(loginDto);
-
 
     expect(response.status).toBe(HttpStatus.CREATED);
     expect(response.body).toEqual(tokens);
@@ -159,5 +163,4 @@ describe('UsersController (integration)', () => {
     expect(usersService.login).toHaveBeenCalledTimes(1);
     expect(usersService.login).toHaveBeenCalledWith(loginDto);
   });
-  
 });

@@ -1,14 +1,21 @@
 import { TypeOrmModuleOptions } from '@nestjs/typeorm';
+import { ConfigService } from '@nestjs/config';
 
-const config: TypeOrmModuleOptions = {
-    type: 'mysql',
-    host: 'database.cec7j8tlq3ha.ap-northeast-2.rds.amazonaws.com',
-    port: 3306,
-    username: 'root',
-    password: 'gkdnr8785!',
-    database: 'database',
-    entities: [__dirname + '/../**/*.entity{.ts,.js}'],
-    synchronize: true, // Only for develnpmopment. Set to false in production.
-};
-
-export default config;
+export const typeORMConfig = async (
+  configService: ConfigService,
+): Promise<TypeOrmModuleOptions> => ({
+  type: 'postgres',
+  host: configService.get<string>('DATABASE_HOST'),
+  port: configService.get<number>('DATABASE_PORT'),
+  username: configService.get<string>('DATABASE_USERNAME'),
+  password: configService.get<string>('DATABASE_PASSWORD'),
+  database: configService.get<string>('DATABASE_NAME'),
+  entities: [__dirname + '/../**/*.entity{.ts,.js}'],
+  synchronize: true,
+  ssl: true,
+  extra: {
+    ssl: {
+      rejectUnauthorized: false,
+    },
+  },
+});

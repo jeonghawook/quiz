@@ -1,21 +1,25 @@
-import { RedisModule } from '@liaoliaots/nestjs-redis';
+import { RedisModule, RedisModuleOptions } from '@liaoliaots/nestjs-redis';
 import { Module } from '@nestjs/common';
-
+import { ConfigModule, ConfigService } from '@nestjs/config';
 
 @Module({
-    imports: [
-        RedisModule.forRoot({
-            readyLog: true,
-            config: [
-                {
-                    namespace: 'notValuable',
-                    host: "redis-12799.c99.us-east-1-4.ec2.cloud.redislabs.com",
-                    port: 12799
-                    ,
-                    password: "FU2QLrIy9r01vAzFcVFaqFpQGZF20asN"
-                },
-            ]
-        })
-    ]
+  imports: [
+    RedisModule.forRootAsync({
+      imports: [ConfigModule],
+      inject: [ConfigService],
+      useFactory: (configService: ConfigService): RedisModuleOptions => {
+        return {
+          readyLog: true,
+          config: [
+            {
+              namespace: 'notValuable',
+              host: configService.get<string>('REDISHOST'),
+              port: configService.get<number>('REDISPORT'),
+            },
+          ],
+        };
+      },
+    }),
+  ],
 })
-export class InMemoryModule { }
+export class InMemoryModule {}

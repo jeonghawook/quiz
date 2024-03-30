@@ -8,13 +8,15 @@ import {
   UseGuards,
   Get,
   Req,
+  Res,
 } from '@nestjs/common';
 import { UsersService } from './users.service';
 import { LoginDto, SignupDto, Tokens } from './dtos/users-dtos';
-import { Users } from './users.entity';
+import { Users } from './entity/users.entity';
 import { GetUser, Public } from './common/decorators';
 import { RTGuard } from './common/guards/rt.guard';
 import { AuthGuard } from '@nestjs/passport';
+import { Response } from 'express';
 
 @Controller('users')
 export class UsersController {
@@ -33,15 +35,8 @@ export class UsersController {
 
   @Public()
   @Post('/login')
-  async login(@Body() loginDto: LoginDto): Promise<Tokens> {
-    try {
-      console.log('running');
-      const tokens = await this.usersService.login(loginDto);
-
-      return tokens;
-    } catch (error) {
-      throw error;
-    }
+  login(@Body() loginDto: LoginDto): Promise<Tokens> {
+    return this.usersService.login(loginDto);
   }
 
   @Delete('/logout')
@@ -53,6 +48,7 @@ export class UsersController {
       throw error;
     }
   }
+
   @Public()
   @UseGuards(RTGuard)
   @Post('/refresh')
@@ -61,8 +57,6 @@ export class UsersController {
     @GetUser() user: Users,
   ): Promise<{ accessToken: string }> {
     try {
-      console.log('HIT');
-      console.log(refreshToken);
       const accessToken = await this.usersService.refreshToken(
         user,
         refreshToken,
@@ -74,21 +68,25 @@ export class UsersController {
     }
   }
 
+  // @Public()
+  // @Patch('refreshToken/remove')
+  // removeToken(){
+  //   return this.usersService.
+  // }
+
   @Public()
   @Get('/kakao')
   @UseGuards(AuthGuard('kakao'))
-  async kakaoLogin() {
-    console.log(1);
-  }
+  async kakaoLogin() {}
 
   @Public()
   @Get('/kakao/callback')
   @UseGuards(AuthGuard('kakao'))
-  async kakaoLoginCallback(@Req() req) {
-    console.log(req.user.profile.nickname);
+  async kakaoLoginCallback(@Req() req, @Res() res: Response) {
     const nickname = req.user.profile.nickname;
     const userEmail = req.user.email;
     const tokens = await this.usersService.socialLogin(nickname, userEmail);
+    res.redirect('https://');
     return tokens;
   }
 }
