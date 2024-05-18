@@ -1,7 +1,7 @@
 version: '3.8'
 services:
   nest-app:
-    image: ghcr.io/${GITHUB_ACTOR}/quiz:${GITHUB_SHA}
+    image: base-dockerized
     build:
       dockerfile: Dockerfile
       context: .
