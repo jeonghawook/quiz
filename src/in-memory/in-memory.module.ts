@@ -13,8 +13,9 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
           config: [
             {
               namespace: 'notValuable',
-              host: configService.get<string>('REDISHOST'),
-              port: configService.get<number>('REDISPORT'),
+              host: 'redis-12577.c57.us-east-1-4.ec2.redns.redis-cloud.com',
+              port: 12577,
+              password: '12345',
             },
           ],
         };

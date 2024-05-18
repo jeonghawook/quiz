@@ -14,13 +14,7 @@ import { InMemoryModule } from 'src/in-memory/in-memory.module';
 
 @Module({
   controllers: [AppController],
-  providers: [
-    AppService,
-    {
-      provide: APP_GUARD,
-      useClass: AtGuard,
-    },
-  ],
+  providers: [AppService],
   imports: [
     UsersModule,
     FlashcardModule,

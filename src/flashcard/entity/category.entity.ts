@@ -6,9 +6,11 @@ import {
   ManyToOne,
   OneToMany,
   JoinColumn,
+  Generated,
 } from 'typeorm';
 import { Flashcard } from './flashcard.entity';
 import { Users } from '../../users/entity/users.entity';
+import { UsersRepository } from 'src/users/users.repository';
 
 @Entity()
 export class Category {
@@ -32,4 +34,8 @@ export class Category {
 
   @Column()
   userId: number;
+
+  @Column()
+  @Generated('increment')
+  sort: number;
 }

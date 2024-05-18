@@ -19,7 +19,7 @@ export class UnauthorizedExceptionFilter implements ExceptionFilter {
       statusCode: status,
       timestamp: new Date().toISOString(),
       path: request.url,
-      message: exception, // Or your custom message
+      message: exception.message || 'unauthorized Exception',
     });
   }
 }

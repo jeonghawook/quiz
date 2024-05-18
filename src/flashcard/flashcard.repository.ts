@@ -7,6 +7,7 @@ import { Flashcard } from './entity/flashcard.entity';
 import { Users } from '../users/entity/users.entity';
 import { CreateFlashcardDto } from './dtos/flashcard-dtos';
 import { Category } from './entity/category.entity';
+import { UpdateCategoryDto } from './dtos/category-dtos';
 
 @Injectable()
 export class FlashcardRepository {
@@ -31,7 +32,7 @@ export class FlashcardRepository {
       users: { userId: users.userId },
     });
   }
-  updateCategory(users, updateCategoryDto) {
+  updateCategory(users, updateCategoryDto: UpdateCategoryDto) {
     return this.categoryRepository.update(updateCategoryDto.categoryId, {
       name: updateCategoryDto.name,
     });

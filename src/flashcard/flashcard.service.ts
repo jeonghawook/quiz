@@ -16,8 +16,8 @@ export class FlashcardService {
     if (category.find((data) => createCategoryDto.name === data.name)) {
       throw new BadRequestException('이미 있는 카테고리 입니다');
     }
-    if (category.length >= 7)
-      throw new BadRequestException('7개 이상 카테고리는 만들수 없습니다');
+    if (category.length >= 3)
+      throw new BadRequestException('3개 이상 카테고리는 만들수 없습니다');
 
     return await this.flashcardRepository.createCategory(
       users,
@@ -26,6 +26,11 @@ export class FlashcardService {
   }
 
   async updateCategory(users, updateCategory) {
+    const category = await this.flashcardRepository.getCategory(users);
+
+    if (category.find((data) => updateCategory.name === data.name)) {
+      throw new BadRequestException('이미 있는 카테고리 입니다');
+    }
     return await this.flashcardRepository.updateCategory(users, updateCategory);
   }
   async deleteCategory(users, categoryIds) {

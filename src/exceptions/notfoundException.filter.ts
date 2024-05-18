@@ -18,7 +18,7 @@ export class NotFoundExceptionFilter implements ExceptionFilter {
       statusCode: status,
       timestamp: new Date().toISOString(),
       path: request.url,
-      message: exception.message || 'The requested resource was not found', // Custom message or use the exception's message
+      message: exception.message || 'not Found Exception',
     });
   }
 }

@@ -11,6 +11,8 @@ import { Users } from './entity/users.entity';
 Injectable();
 
 export class UsersRepository {
+  constructor(@InjectRepository(Users) private users: Repository<Users>) {}
+
   async socialSignUp(userEmail: string, nickname: string) {
     try {
       const user = this.users.create({
@@ -19,10 +21,10 @@ export class UsersRepository {
       });
       await this.users.save(user);
       return user;
-    } catch (error) {}
+    } catch (error) {
+      console.log(error);
+    }
   }
-
-  constructor(@InjectRepository(Users) private users: Repository<Users>) {}
 
   async findEmail(userEmail: string): Promise<Users> {
     return await this.users.findOne({ where: { userEmail } });
@@ -36,18 +38,17 @@ export class UsersRepository {
         userName: signupDto.userName,
         password: hashedPassword,
       });
+
       await this.users.save(user);
     } catch (error) {
-      if (error.errno == 1062)
-        if (error.sqlMessage.includes('users.IDX_9047b2d58f91586f14f0cf44a4')) {
-          throw new ConflictException('User with this email already exists.');
-        } else if (
-          error.sqlMessage.includes('users.IDX_ad02a1be8707004cb805a4b502')
-        ) {
-          throw new ConflictException(
-            'User with this nickname already exists.',
-          );
+      if (error.code === '23505') {
+        if (error.constraint === 'UQ_9047b2d58f91586f14f0cf44a45') {
+          throw new ConflictException('이미 존재하는 이메일 입니다');
+        } else if (error.constraint === 'UQ_ad02a1be8707004cb805a4b5023') {
+          throw new ConflictException('이미 존재하는 닉네임 입니다');
         }
+        console.log(error);
+      }
     }
   }
 

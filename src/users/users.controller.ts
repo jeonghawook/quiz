@@ -49,7 +49,6 @@ export class UsersController {
     }
   }
 
-  @Public()
   @UseGuards(RTGuard)
   @Post('/refresh')
   async refreshToken(

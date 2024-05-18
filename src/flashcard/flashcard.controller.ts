@@ -8,29 +8,34 @@ import {
   ParseIntPipe,
   Patch,
   Post,
+  UseGuards,
 } from '@nestjs/common';
 import { GetUser, Public } from 'src/users/common/decorators';
 import { FlashcardService } from './flashcard.service';
 import { Flashcard } from './entity/flashcard.entity';
 import { CreateFlashcardDto, UpdateFlashcardDto } from './dtos/flashcard-dtos';
 import { Users } from 'src/users/entity/users.entity';
+import { AtGuard } from 'src/users/common/guards/at.guard';
 
 @Controller('category')
 export class FlashcardController {
   constructor(private flashcardService: FlashcardService) {}
 
+  @UseGuards(AtGuard)
   @Get()
-  getCategory(@GetUser() users) {
+  getCategory(@GetUser() users: Users) {
     return this.flashcardService.getCategory(users);
   }
 
+  @UseGuards(AtGuard)
   @Post()
-  createCategory(@Body() createCategoryDto: any, @GetUser() users) {
+  createCategory(@Body() createCategoryDto: any, @GetUser() users: Users) {
     return this.flashcardService.createCategory(users, createCategoryDto);
   }
 
+  @UseGuards(AtGuard)
   @Patch()
-  updateCategory(@GetUser() users, @Body() updateCategory: any) {
+  updateCategory(@GetUser() users: Users, @Body() updateCategory: any) {
     return this.flashcardService.updateCategory(users, updateCategory);
   }
 
@@ -78,6 +83,7 @@ export class FlashcardController {
     }
   }
 
+  @UseGuards(AtGuard)
   @Patch('/flashcard')
   async updateFlashcard(
     @GetUser() user: Users,

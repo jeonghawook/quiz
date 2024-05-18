@@ -14,7 +14,7 @@ export class AtStrategy extends PassportStrategy(Strategy, 'jwt-AT') {
 
   validate(payload: any) {
     if (!payload) {
-      //  throw new UnauthorizedException('Invalid token or token expired');
+      throw new UnauthorizedException('Invalid token or token expired');
     }
     return payload;
     // 위에 이 뜻임 req.user = payload;
