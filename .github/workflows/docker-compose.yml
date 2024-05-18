@@ -52,7 +52,7 @@ jobs:
         with:
           builder: ${{ steps.buildx.outputs.name }}
           push: true
-          tags: ghcr.io/${{ github.actor }}/base-dockerized:${{ github.sha }}
+          tags: ghcr.io/${{ github.actor }}/base-dockerized:latest
 
   deploy:
     needs: build
@@ -62,12 +62,6 @@ jobs:
       # Checkout source code
       - name: Check out source code
         uses: actions/checkout@v3
-
-      # Set environment variables
-      - name: Set environment variables
-        run: |
-          echo "GITHUB_ACTOR=${{ github.actor }}" >> $GITHUB_ENV
-          echo "GITHUB_SHA=${{ github.sha }}" >> $GITHUB_ENV
 
       # Pull Docker images
       - name: Pull Docker images
