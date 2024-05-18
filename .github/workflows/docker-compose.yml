@@ -13,23 +13,6 @@ on:
         default: 'production'
 
 jobs:
-  # Test job (uncomment if needed)
-  # test:
-  #   runs-on: ubuntu-latest
-  #   strategy:
-  #     matrix:
-  #       node-version: [18.x]
-  #
-  #   steps:
-  #     - uses: actions/checkout@v3
-  #     - name: Setup node.js ${{ matrix.node-version }}
-  #       uses: actions/setup-node@v3
-  #       with:
-  #         node-version: ${{ matrix.node-version }}
-  #         cache: 'npm'
-  #     - run: npm ci
-  #     - run: npm test
-
   build:
     name: Build
     runs-on: ubuntu-latest
@@ -37,6 +20,8 @@ jobs:
       # Checkout source code
       - name: Check out source code
         uses: actions/checkout@v3
+        with:
+          ref: ${{ github.event.inputs.branch }}
 
       # Set up Docker Buildx
       - name: Set up docker buildx
@@ -67,7 +52,7 @@ jobs:
         with:
           builder: ${{ steps.buildx.outputs.name }}
           push: true
-          tags: ghcr.io/${{ github.actor }}/quiz:${{ github.sha }}
+          tags: ghcr.io/${{ github.actor }}/base-dockerized:${{ github.sha }}
 
   deploy:
     needs: build
@@ -78,6 +63,12 @@ jobs:
       - name: Check out source code
         uses: actions/checkout@v3
 
+      # Set environment variables
+      - name: Set environment variables
+        run: |
+          echo "GITHUB_ACTOR=${{ github.actor }}" >> $GITHUB_ENV
+          echo "GITHUB_SHA=${{ github.sha }}" >> $GITHUB_ENV
+
       # Pull Docker images
       - name: Pull Docker images
         run: docker-compose -f /home/ubuntu/actions-runner/_work/quiz/quiz/docker-compose.yml pull
@@ -86,9 +77,10 @@ jobs:
       - name: Stop and remove existing containers
         run: docker-compose -f /home/ubuntu/actions-runner/_work/quiz/quiz/docker-compose.yml down
 
+      # Remove old Docker images
       - name: Remove old Docker images
         run: docker image prune -f
 
       # Start services
       - name: Start services
-        run: docker-compose -f /home/ubuntu/actions-runner/_work/quiz/quiz/docker-compose.yml up -d --build
+        run: docker-compose -f /home/ubuntu/actions-runner/_work/quiz/quiz/docker-compose.yml up -d
