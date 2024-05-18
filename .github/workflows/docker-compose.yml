@@ -11,6 +11,7 @@ on:
         description: 'Environment to deploy to'
         required: true
         default: 'production'
+
 env:
   AWS_REGION: ap-northeast-2 # set this to your preferred AWS region, e.g. us-west-1
   ECR_REPOSITORY: my_ecr
@@ -42,7 +43,7 @@ jobs:
         id: build-image
         env:
           ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
-          ECR_REPOSITORY: ${{ secrets.ECR_REPOSITORY }}
+          ECR_REPOSITORY: ${{ env.ECR_REPOSITORY }} # Use env variable instead of secret here
           IMAGE_TAG: ${{ github.sha }}
         run: |
           # Build a docker container
