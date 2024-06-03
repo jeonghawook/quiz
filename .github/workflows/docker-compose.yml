@@ -101,5 +101,19 @@ jobs:
 
       # Start services with environment variables
       - name: Start services
-        run: |
-          docker-compose -f /home/ubuntu/actions-runner/_work/quiz/quiz/docker-compose.yml up -d --env-file .env
+        env:
+          DATABASE_HOST: ${{ secrets.DATABASE_HOST }}
+          DATABASE_PORT: ${{ secrets.DATABASE_PORT }}
+          DATABASE_USERNAME: ${{ secrets.DATABASE_USERNAME }}
+          DATABASE_PASSWORD: ${{ secrets.DATABASE_PASSWORD }}
+          DATABASE_NAME: ${{ secrets.DATABASE_NAME }}
+          REFRESH: ${{ secrets.REFRESH }}
+          ACCESS: ${{ secrets.ACCESS }}
+          REDISHOST: ${{ secrets.REDISHOST }}
+          REDISTPORT: ${{ secrets.REDISTPORT }}
+          REDISPASSWORD: ${{ secrets.REDISPASSWORD }}
+          REFRESHEXP: ${{ secrets.REFRESHEXP }}
+          ACCESSEXP: ${{ secrets.ACCESSEXP }}
+          SMTP_USER: ${{ secrets.SMTP_USER }}
+          SMTP_PASS: ${{ secrets.SMTP_PASS }}
+        run: docker-compose -f /home/ubuntu/actions-runner/_work/quiz/quiz/docker-compose.yml up -d
