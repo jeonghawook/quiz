@@ -3,7 +3,7 @@ import {
   Injectable,
   UnauthorizedException,
 } from '@nestjs/common';
-import { LoginDto, SignupDto } from './dtos/users-dtos';
+import { LoginDto, PasswordDto, SignupDto } from './dtos/users-dtos';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Users } from './entity/users.entity';
@@ -12,6 +12,10 @@ Injectable();
 
 export class UsersRepository {
   constructor(@InjectRepository(Users) private users: Repository<Users>) {}
+
+  async findUserWithinServer(userEmail: string) {
+    return await this.users.findOne({ where: { userEmail } });
+  }
 
   async socialSignUp(userEmail: string, nickname: string) {
     try {
@@ -70,5 +74,19 @@ export class UsersRepository {
 
   async setRefreshToken(userId: number, refreshToken: string) {
     await this.users.update({ userId }, { refreshToken });
+  }
+
+  async getProfile(user: Users) {
+    return await this.users.findOneOrFail({
+      select: { userEmail: true, nickname: true },
+      where: { userId: user.userId },
+    });
+  }
+
+  async changePassword(user: Users, passwordDto: PasswordDto) {
+    return await this.users.update(
+      { userId: user.userId },
+      { password: passwordDto.newPassword },
+    );
   }
 }

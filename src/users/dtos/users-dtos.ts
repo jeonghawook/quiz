@@ -1,16 +1,21 @@
 export class LoginDto {
-    userEmail: string;
-    password: string;
+  userEmail: string;
+  password: string;
 }
 
 export class SignupDto {
-    nickname: string;
-    userName: string;
-    userEmail: string;
-    password: string;
+  nickname: string;
+  userName: string;
+  userEmail: string;
+  password: string;
 }
 
 export class Tokens {
-    accessToken: string;
-    refreshToken: string;
+  accessToken: string;
+  refreshToken: string;
+}
+
+export class PasswordDto {
+  password: string;
+  newPassword: string;
 }

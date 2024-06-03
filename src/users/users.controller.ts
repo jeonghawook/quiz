@@ -11,16 +11,21 @@ import {
   Res,
 } from '@nestjs/common';
 import { UsersService } from './users.service';
-import { LoginDto, SignupDto, Tokens } from './dtos/users-dtos';
+import { LoginDto, PasswordDto, SignupDto, Tokens } from './dtos/users-dtos';
 import { Users } from './entity/users.entity';
 import { GetUser, Public } from './common/decorators';
 import { RTGuard } from './common/guards/rt.guard';
 import { AuthGuard } from '@nestjs/passport';
 import { Response } from 'express';
+import { EmailService } from 'src/email/email.service';
+import { AtGuard } from './common/guards/at.guard';
 
 @Controller('users')
 export class UsersController {
-  constructor(private usersService: UsersService) {}
+  constructor(
+    private usersService: UsersService,
+    private emailService: EmailService,
+  ) {}
 
   @Public()
   @Post('/signup')
@@ -87,5 +92,35 @@ export class UsersController {
     const tokens = await this.usersService.socialLogin(nickname, userEmail);
     res.redirect('https://');
     return tokens;
+  }
+
+  @UseGuards(AtGuard)
+  @Get('/emailVerification')
+  async requestVerificationEmail(@GetUser() user: Users) {
+    const code = await this.emailService.requestVerificationEmail(user);
+    return await this.usersService.saveCode(user, code);
+  }
+
+  @UseGuards(AtGuard)
+  @Post('/emailVerification')
+  async confirmVerificationEmail(
+    @GetUser() user: Users,
+    @Body() verificationInfo: any,
+  ) {
+    await this.usersService.confirmVerificationEmail(user, verificationInfo);
+  }
+  @UseGuards(AtGuard)
+  @Get('/profile')
+  async getProfile(@GetUser() user: Users) {
+    return await this.usersService.getProfile(user);
+  }
+
+  @UseGuards(AtGuard)
+  @Post('/newPassword')
+  async changePassworkd(
+    @GetUser() user: Users,
+    @Body() passwordDto: PasswordDto,
+  ) {
+    return await this.usersService.changePassword(user, passwordDto);
   }
 }

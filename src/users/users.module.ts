@@ -9,6 +9,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { Users } from './entity/users.entity';
 import { KakaoStrategy } from './strategies/kakao.st';
 import { InMemoryModule } from 'src/in-memory/in-memory.module';
+import { EmailService } from 'src/email/email.service';
 
 @Module({
   imports: [
@@ -22,6 +23,7 @@ import { InMemoryModule } from 'src/in-memory/in-memory.module';
     AtStrategy,
     RtStrategy,
     KakaoStrategy,
+    EmailService,
   ],
 })
 export class UsersModule {}

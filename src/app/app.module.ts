@@ -3,30 +3,28 @@ import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { UsersModule } from '../users/users.module';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { AtGuard } from 'src/users/common/guards/at.guard';
-import { APP_GUARD } from '@nestjs/core';
-//import { InMemoryModule } from 'src/in-memory/in-memory.module';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { typeORMConfig } from '../configs/typeorm.config';
 import { HttpLoggerMiddleware } from '../middleware/logger';
 import { FlashcardModule } from '../flashcard/flashcard.module';
 import { InMemoryModule } from 'src/in-memory/in-memory.module';
+import { EmailModule } from 'src/email/email.module';
 
 @Module({
-  controllers: [AppController],
-  providers: [AppService],
   imports: [
-    UsersModule,
-    FlashcardModule,
-
+    ConfigModule.forRoot({ isGlobal: true, envFilePath: '.env' }),
     TypeOrmModule.forRootAsync({
       useFactory: (configService: ConfigService) =>
         typeORMConfig(configService),
       inject: [ConfigService],
     }),
+    UsersModule,
+    FlashcardModule,
+    EmailModule,
     InMemoryModule,
-    ConfigModule.forRoot({ isGlobal: true, envFilePath: '.env' }),
   ],
+  controllers: [AppController],
+  providers: [AppService],
 })
 export class AppModule implements NestModule {
   configure(consumer: MiddlewareConsumer) {

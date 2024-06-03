@@ -5,7 +5,7 @@ import {
   NotFoundException,
   UnauthorizedException,
 } from '@nestjs/common';
-import { LoginDto, SignupDto, Tokens } from './dtos/users-dtos';
+import { LoginDto, PasswordDto, SignupDto, Tokens } from './dtos/users-dtos';
 import { UsersRepository } from './users.repository';
 import * as bcrypt from 'bcryptjs';
 import { Users } from './entity/users.entity';
@@ -36,9 +36,10 @@ export class UsersService {
     return { refreshToken, accessToken };
   }
   async getRefreshToken(user: Users): Promise<string> {
-    const { nickname, rank, userId, isActive } = user;
+    const { nickname, rank, userId, isActive, userEmail } = user;
     return await this.jwtService.signAsync(
       {
+        userEmail,
         nickname,
         rank,
         userId,
@@ -51,9 +52,10 @@ export class UsersService {
     );
   }
   async getAccessToken(user: Users): Promise<string> {
-    const { nickname, rank, userId, isActive } = user;
+    const { nickname, rank, userId, isActive, userEmail } = user;
     return await this.jwtService.signAsync(
       {
+        userEmail,
         nickname,
         rank,
         userId,
@@ -128,4 +130,28 @@ export class UsersService {
   }
 
   async removeToken() {}
+
+  async saveCode(user: Users, code: string) {
+    return await this.client.set(`${user.userEmail}`, `${code}`);
+  }
+
+  async confirmVerificationEmail(user: Users, verificationInfo: any) {
+    const code = await this.client.get(`${user.userEmail}`);
+    if (code == verificationInfo.code) {
+    }
+  }
+
+  async getProfile(user: Users) {
+    return await this.userRepository.getProfile(user);
+  }
+
+  async changePassword(user: Users, passwordDto: PasswordDto) {
+    const { password } = await this.userRepository.findUserWithinServer(
+      user.userEmail,
+    );
+    if (password !== passwordDto.password) {
+      throw new UnauthorizedException('기존 비밀번호를 확인해주세요');
+    }
+    return await this.userRepository.changePassword(user, passwordDto);
+  }
 }
