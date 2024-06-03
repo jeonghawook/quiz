@@ -63,13 +63,8 @@ jobs:
       - name: Check out source code
         uses: actions/checkout@v3
 
-      # Set environment variables
+      # Set environment variables from secrets
       - name: Set environment variables
-        run: |
-          echo "GITHUB_ACTOR=${{ github.actor }}" >> $GITHUB_ENV
-          echo "GHCR_TOKEN=${{ secrets.GHCR_TOKEN }}" >> $GITHUB_ENV
-
-       - name: Set environment variables
         run: |
           echo "GITHUB_ACTOR=${{ github.actor }}" >> $GITHUB_ENV
           echo "GHCR_TOKEN=${{ secrets.GHCR_TOKEN }}" >> $GITHUB_ENV
@@ -104,6 +99,7 @@ jobs:
       - name: Remove old Docker images
         run: docker image prune -f
 
-      # Start services
+      # Start services with environment variables
       - name: Start services
-        run: docker-compose -f /home/ubuntu/actions-runner/_work/quiz/quiz/docker-compose.yml up -d
+        run: |
+          docker-compose -f /home/ubuntu/actions-runner/_work/quiz/quiz/docker-compose.yml up -d --env-file .env
