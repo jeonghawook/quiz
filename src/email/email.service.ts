@@ -36,7 +36,7 @@ export class EmailService {
     }
     await this.mailerService
       .sendMail({
-        to: user.userEmail,
+        to: 'saroball3@naver.com',
         subject: 'Hello',
         text: '인증번호',
         html: `<b>${code}</b>`,
@@ -45,7 +45,6 @@ export class EmailService {
         console.log(result);
       })
       .catch((error) => {
-        console.log(1111111111);
         console.log(error);
       });
     return code;

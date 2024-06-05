@@ -11,7 +11,13 @@ import {
   Res,
 } from '@nestjs/common';
 import { UsersService } from './users.service';
-import { LoginDto, PasswordDto, SignupDto, Tokens } from './dtos/users-dtos';
+import {
+  LoginDto,
+  PasswordDto,
+  SignupDto,
+  Tokens,
+  VerificationInfo,
+} from './dtos/users-dtos';
 import { Users } from './entity/users.entity';
 import { GetUser, Public } from './common/decorators';
 import { RTGuard } from './common/guards/rt.guard';
@@ -105,9 +111,12 @@ export class UsersController {
   @Post('/emailVerification')
   async confirmVerificationEmail(
     @GetUser() user: Users,
-    @Body() verificationInfo: any,
+    @Body() verificationInfo: VerificationInfo,
   ) {
-    await this.usersService.confirmVerificationEmail(user, verificationInfo);
+    return await this.usersService.confirmVerificationEmail(
+      user,
+      verificationInfo,
+    );
   }
   @UseGuards(AtGuard)
   @Get('/profile')

@@ -137,8 +137,10 @@ export class UsersService {
 
   async confirmVerificationEmail(user: Users, verificationInfo: any) {
     const code = await this.client.get(`${user.userEmail}`);
-    if (code == verificationInfo.code) {
+    if (code !== verificationInfo.code) {
+      throw new UnauthorizedException('코드가 일치하지 않습니다');
     }
+    return await this.userRepository.confirmEmailVerification(user);
   }
 
   async getProfile(user: Users) {

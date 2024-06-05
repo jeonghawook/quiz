@@ -9,6 +9,7 @@ import { HttpLoggerMiddleware } from '../middleware/logger';
 import { FlashcardModule } from '../flashcard/flashcard.module';
 import { InMemoryModule } from 'src/in-memory/in-memory.module';
 import { EmailModule } from 'src/email/email.module';
+import { TimeModule } from 'src/time/time.module';
 
 @Module({
   imports: [
@@ -22,6 +23,7 @@ import { EmailModule } from 'src/email/email.module';
     FlashcardModule,
     EmailModule,
     InMemoryModule,
+    TimeModule,
   ],
   controllers: [AppController],
   providers: [AppService],

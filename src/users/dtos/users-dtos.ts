@@ -19,3 +19,7 @@ export class PasswordDto {
   password: string;
   newPassword: string;
 }
+
+export class VerificationInfo {
+  code: string;
+}

@@ -78,7 +78,11 @@ export class UsersRepository {
 
   async getProfile(user: Users) {
     return await this.users.findOneOrFail({
-      select: { userEmail: true, nickname: true },
+      select: {
+        userEmail: true,
+        nickname: true,
+        emailVerificationStatus: true,
+      },
       where: { userId: user.userId },
     });
   }
@@ -87,6 +91,13 @@ export class UsersRepository {
     return await this.users.update(
       { userId: user.userId },
       { password: passwordDto.newPassword },
+    );
+  }
+
+  async confirmEmailVerification(user: Users) {
+    return await this.users.update(
+      { userId: user.userId },
+      { emailVerificationStatus: true },
     );
   }
 }

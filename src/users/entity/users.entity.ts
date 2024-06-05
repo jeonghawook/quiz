@@ -7,6 +7,7 @@ import {
   OneToMany,
 } from 'typeorm';
 import { Category } from '../../flashcard/entity/category.entity';
+import { Time } from 'src/time/entities/time.entity';
 
 @Entity()
 export class Users {
@@ -42,9 +43,21 @@ export class Users {
   @Column({ default: false })
   isAdmin: boolean;
 
+  @Column({ default: false })
+  emailVerificationStatus: boolean;
+
   @OneToMany(() => Category, (category) => category.users, {
     cascade: true, // Or specifically ['insert', 'update']
     onDelete: 'CASCADE', // Optional based on whether you want deleting a User to delete all their Categories
   })
   categories: Category[];
+
+  @OneToMany(() => Time, (time) => time.users, {
+    cascade: true,
+    onDelete: 'CASCADE',
+  })
+  time: Time[];
+
+  @Column({ nullable: true })
+  totalTime: number;
 }
