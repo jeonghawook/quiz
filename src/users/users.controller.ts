@@ -132,4 +132,13 @@ export class UsersController {
   ) {
     return await this.usersService.changePassword(user, passwordDto);
   }
+
+  @UseGuards(AtGuard)
+  @Post('/nickname')
+  async changeNickname(
+    @GetUser() user: Users,
+    @Body('nickname') nickname: string,
+  ) {
+    return await this.usersService.changeNickname(user, nickname);
+  }
 }

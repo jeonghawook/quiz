@@ -10,6 +10,7 @@ import { FlashcardModule } from '../flashcard/flashcard.module';
 import { InMemoryModule } from 'src/in-memory/in-memory.module';
 import { EmailModule } from 'src/email/email.module';
 import { TimeModule } from 'src/time/time.module';
+import { PostModule } from 'src/post/post.module';
 
 @Module({
   imports: [
@@ -24,6 +25,7 @@ import { TimeModule } from 'src/time/time.module';
     EmailModule,
     InMemoryModule,
     TimeModule,
+    PostModule,
   ],
   controllers: [AppController],
   providers: [AppService],

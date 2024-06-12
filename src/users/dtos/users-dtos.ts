@@ -16,7 +16,7 @@ export class Tokens {
 }
 
 export class PasswordDto {
-  password: string;
+  currentPassword: string;
   newPassword: string;
 }
 

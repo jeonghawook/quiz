@@ -7,10 +7,12 @@ import {
   OneToMany,
   JoinColumn,
   Generated,
+  OneToOne,
 } from 'typeorm';
 import { Flashcard } from './flashcard.entity';
 import { Users } from '../../users/entity/users.entity';
 import { UsersRepository } from 'src/users/users.repository';
+import { Post } from 'src/post/entity/post.entity';
 
 @Entity()
 export class Category {
@@ -38,4 +40,10 @@ export class Category {
   @Column()
   @Generated('increment')
   sort: number;
+
+  @OneToOne(() => Post, (post) => post.category, {
+    cascade: true,
+    onDelete: 'CASCADE',
+  })
+  post: Post;
 }

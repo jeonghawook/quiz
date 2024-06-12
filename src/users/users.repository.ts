@@ -82,15 +82,16 @@ export class UsersRepository {
         userEmail: true,
         nickname: true,
         emailVerificationStatus: true,
+        totalTime: true,
       },
       where: { userId: user.userId },
     });
   }
 
-  async changePassword(user: Users, passwordDto: PasswordDto) {
+  async changePassword(user: Users, hashedPassword: string) {
     return await this.users.update(
       { userId: user.userId },
-      { password: passwordDto.newPassword },
+      { password: hashedPassword },
     );
   }
 
@@ -99,5 +100,15 @@ export class UsersRepository {
       { userId: user.userId },
       { emailVerificationStatus: true },
     );
+  }
+
+  async changeNickname(user: Users, nickname: string) {
+    try {
+      return await this.users.update({ userId: user.userId }, { nickname });
+    } catch (error) {
+      if (error.code === '23505') {
+        throw new ConflictException('이미 존재하는 닉네임 입니다');
+      }
+    }
   }
 }

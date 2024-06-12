@@ -79,7 +79,6 @@ export class UsersService {
 
     if (!passwordMatches)
       throw new UnauthorizedException('비밀번호가 일치하지 않습니다.');
-
     const tokens = await this.getTokens(user);
     await this.userRepository.setRefreshToken(user.userId, tokens.refreshToken);
     await this.client.set(`${user.userId}:RT`, tokens.refreshToken);
@@ -151,9 +150,27 @@ export class UsersService {
     const { password } = await this.userRepository.findUserWithinServer(
       user.userEmail,
     );
-    if (password !== passwordDto.password) {
+    const checkPassword = await bcrypt.compare(
+      passwordDto.currentPassword,
+      password,
+    );
+
+    if (!checkPassword) {
       throw new UnauthorizedException('기존 비밀번호를 확인해주세요');
     }
-    return await this.userRepository.changePassword(user, passwordDto);
+
+    const hashedPassword = await bcrypt.hash(passwordDto.newPassword, 2);
+    return await this.userRepository.changePassword(user, hashedPassword);
+  }
+
+  async changeNickname(user: Users, nickname: string) {
+    const userInfo = await this.userRepository.findUserWithinServer(
+      user.userEmail,
+    );
+    if (!userInfo) {
+      throw new UnauthorizedException('없는 회원입니다');
+    }
+
+    return await this.userRepository.changeNickname(user, nickname);
   }
 }
