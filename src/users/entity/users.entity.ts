@@ -58,6 +58,6 @@ export class Users {
   })
   time: Time[];
 
-  @Column({ nullable: true })
+  @Column({ default: 0 })
   totalTime: number;
 }
