@@ -18,7 +18,7 @@ export class Post {
   @Column()
   content: string;
 
-  @Column()
+  @Column({ default: 0 })
   pointsRequired: number;
 
   @Column({ default: 0 })
