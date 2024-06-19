@@ -5,9 +5,11 @@ import {
   PrimaryGeneratedColumn,
   Unique,
   OneToMany,
+  CreateDateColumn,
 } from 'typeorm';
 import { Category } from '../../flashcard/entity/category.entity';
 import { Time } from 'src/time/entities/time.entity';
+import { UserToPost } from 'src/post/entity/user-post.entity';
 
 @Entity()
 export class Users {
@@ -47,8 +49,8 @@ export class Users {
   emailVerificationStatus: boolean;
 
   @OneToMany(() => Category, (category) => category.users, {
-    cascade: true, // Or specifically ['insert', 'update']
-    onDelete: 'CASCADE', // Optional based on whether you want deleting a User to delete all their Categories
+    cascade: true,
+    onDelete: 'CASCADE',
   })
   categories: Category[];
 
@@ -60,4 +62,10 @@ export class Users {
 
   @Column({ default: 0 })
   totalTime: number;
+
+  @OneToMany(() => UserToPost, (userToPost) => userToPost.post)
+  userToPost: UserToPost[];
+
+  @CreateDateColumn({ type: 'timestamp' })
+  createdAt: Date;
 }

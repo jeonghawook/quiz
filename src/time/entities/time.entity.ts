@@ -1,6 +1,7 @@
 import { Users } from 'src/users/entity/users.entity';
 import {
   Column,
+  CreateDateColumn,
   Entity,
   JoinColumn,
   ManyToOne,
@@ -39,4 +40,7 @@ export class Time {
 
   @Column()
   userId: number;
+
+  @CreateDateColumn({ type: 'timestamp' })
+  createdAt: Date;
 }

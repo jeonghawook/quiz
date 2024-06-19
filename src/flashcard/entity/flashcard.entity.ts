@@ -1,4 +1,3 @@
-// src/flashcard/flashcard.entity.ts
 import {
   Entity,
   PrimaryGeneratedColumn,
@@ -16,6 +15,7 @@ export class Flashcard {
   flashcardId: number;
 
   @ManyToOne(() => Category, (category) => category.flashcards, {
+    cascade: true,
     onDelete: 'CASCADE',
   })
   @JoinColumn({ name: 'categoryId' })
@@ -37,6 +37,6 @@ export class Flashcard {
   })
   focus: boolean;
 
-  @CreateDateColumn()
+  @CreateDateColumn({ type: 'timestamp' })
   createdAt: Date;
 }

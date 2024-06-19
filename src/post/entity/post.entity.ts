@@ -1,11 +1,15 @@
 import { Category } from 'src/flashcard/entity/category.entity';
 import {
   Column,
+  CreateDateColumn,
   Entity,
   JoinColumn,
+  OneToMany,
   OneToOne,
   PrimaryGeneratedColumn,
 } from 'typeorm';
+import { UserToPost } from './user-post.entity';
+import { Comment } from 'src/post/entity/comment.entity';
 
 @Entity()
 export class Post {
@@ -24,10 +28,22 @@ export class Post {
   @Column({ default: 0 })
   likes: number;
 
-  @OneToOne(() => Category, (category) => category.post)
+  @OneToOne(() => Category, (category) => category.post, {
+    cascade: true,
+    onDelete: 'CASCADE',
+  })
   @JoinColumn({ name: 'categoryId' })
   category: Category;
 
   @Column()
   categoryId: number;
+
+  @OneToMany(() => UserToPost, (userToPost) => userToPost.post)
+  userToPost: UserToPost[];
+
+  @OneToMany(() => Comment, (comment) => comment.post)
+  comment: Comment[];
+
+  @CreateDateColumn({ type: 'timestamp' })
+  createdAt: Date;
 }

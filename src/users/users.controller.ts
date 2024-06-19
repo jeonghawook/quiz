@@ -47,7 +47,11 @@ export class UsersController {
   @Public()
   @Post('/login')
   login(@Body() loginDto: LoginDto): Promise<Tokens> {
-    return this.usersService.login(loginDto);
+    try {
+      return this.usersService.login(loginDto);
+    } catch (error) {
+      throw error;
+    }
   }
 
   @Delete('/logout')
@@ -103,8 +107,12 @@ export class UsersController {
   @UseGuards(AtGuard)
   @Get('/emailVerification')
   async requestVerificationEmail(@GetUser() user: Users) {
-    const code = await this.emailService.requestVerificationEmail(user);
-    return await this.usersService.saveCode(user, code);
+    try {
+      const code = await this.emailService.requestVerificationEmail(user);
+      return await this.usersService.saveCode(user, code);
+    } catch (error) {
+      throw error;
+    }
   }
 
   @UseGuards(AtGuard)
@@ -113,15 +121,23 @@ export class UsersController {
     @GetUser() user: Users,
     @Body() verificationInfo: VerificationInfo,
   ) {
-    return await this.usersService.confirmVerificationEmail(
-      user,
-      verificationInfo,
-    );
+    try {
+      return await this.usersService.confirmVerificationEmail(
+        user,
+        verificationInfo,
+      );
+    } catch (error) {
+      throw error;
+    }
   }
   @UseGuards(AtGuard)
   @Get('/profile')
   async getProfile(@GetUser() user: Users) {
-    return await this.usersService.getProfile(user);
+    try {
+      return await this.usersService.getProfile(user);
+    } catch (error) {
+      throw error;
+    }
   }
 
   @UseGuards(AtGuard)
@@ -130,7 +146,11 @@ export class UsersController {
     @GetUser() user: Users,
     @Body() passwordDto: PasswordDto,
   ) {
-    return await this.usersService.changePassword(user, passwordDto);
+    try {
+      return await this.usersService.changePassword(user, passwordDto);
+    } catch (error) {
+      throw error;
+    }
   }
 
   @UseGuards(AtGuard)
@@ -139,6 +159,10 @@ export class UsersController {
     @GetUser() user: Users,
     @Body('nickname') nickname: string,
   ) {
-    return await this.usersService.changeNickname(user, nickname);
+    try {
+      return await this.usersService.changeNickname(user, nickname);
+    } catch (error) {
+      throw error;
+    }
   }
 }

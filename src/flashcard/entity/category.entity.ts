@@ -8,6 +8,7 @@ import {
   JoinColumn,
   Generated,
   OneToOne,
+  CreateDateColumn,
 } from 'typeorm';
 import { Flashcard } from './flashcard.entity';
 import { Users } from '../../users/entity/users.entity';
@@ -28,10 +29,7 @@ export class Category {
   @JoinColumn({ name: 'userId' }) // Explicitly define the FK column if it doesn't follow TypeORM's convention
   users: Users;
 
-  @OneToMany(() => Flashcard, (flashcard) => flashcard.category, {
-    cascade: true, // Or specifically ['insert', 'update']
-    onDelete: 'CASCADE', // This ensures that deleting a Category deletes all related Flashcards
-  })
+  @OneToMany(() => Flashcard, (flashcard) => flashcard.category)
   flashcards: Flashcard[];
 
   @Column()
@@ -41,9 +39,9 @@ export class Category {
   @Generated('increment')
   sort: number;
 
-  @OneToOne(() => Post, (post) => post.category, {
-    cascade: true,
-    onDelete: 'CASCADE',
-  })
+  @OneToOne(() => Post, (post) => post.category)
   post: Post;
+
+  @CreateDateColumn({ type: 'timestamp' })
+  createdAt: Date;
 }

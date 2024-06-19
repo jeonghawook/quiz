@@ -23,25 +23,47 @@ export class FlashcardController {
 
   @UseGuards(AtGuard)
   @Get()
-  getCategory(@GetUser() users: Users) {
-    return this.flashcardService.getCategory(users);
+  async getCategory(@GetUser() users: Users) {
+    try {
+      return await this.flashcardService.getCategory(users);
+    } catch (error) {
+      throw error;
+    }
   }
 
   @UseGuards(AtGuard)
   @Post()
-  createCategory(@Body() createCategoryDto: any, @GetUser() users: Users) {
-    return this.flashcardService.createCategory(users, createCategoryDto);
+  async createCategory(
+    @Body() createCategoryDto: any,
+    @GetUser() users: Users,
+  ) {
+    try {
+      return await this.flashcardService.createCategory(
+        users,
+        createCategoryDto,
+      );
+    } catch (error) {
+      throw error;
+    }
   }
 
   @UseGuards(AtGuard)
   @Patch()
-  updateCategory(@GetUser() users: Users, @Body() updateCategory: any) {
-    return this.flashcardService.updateCategory(users, updateCategory);
+  async updateCategory(@GetUser() users: Users, @Body() updateCategory: any) {
+    try {
+      return await this.flashcardService.updateCategory(users, updateCategory);
+    } catch (error) {
+      throw error;
+    }
   }
 
   @Delete()
-  deleteCategory(@GetUser() users, @Body() categoryIds) {
-    this.flashcardService.deleteCategory(users, categoryIds);
+  async deleteCategory(@GetUser() users, @Body() categoryIds) {
+    try {
+      await this.flashcardService.deleteCategory(users, categoryIds);
+    } catch (error) {
+      throw error;
+    }
   }
 
   @Get('/:categoryId/flashcard')
@@ -49,12 +71,11 @@ export class FlashcardController {
     @GetUser() users: Users,
     @Param('categoryId', ParseIntPipe) categoryId: number,
   ): Promise<Flashcard[]> {
-    const getFlashcard = await this.flashcardService.getFlashcard(
-      categoryId,
-      users,
-    );
-
-    return getFlashcard;
+    try {
+      return await this.flashcardService.getFlashcard(categoryId, users);
+    } catch (error) {
+      throw error;
+    }
   }
 
   @Get('/:categoryId/flashcard/list')
@@ -62,7 +83,11 @@ export class FlashcardController {
     @GetUser() user: Users,
     @Param('categoryId', ParseIntPipe) categoryId: number,
   ): Promise<Flashcard[]> {
-    return await this.flashcardService.getFlashcardList(categoryId, user);
+    try {
+      return await this.flashcardService.getFlashcardList(categoryId, user);
+    } catch (error) {
+      throw error;
+    }
   }
 
   @Post('/:categoryId/flashcard')
@@ -89,8 +114,12 @@ export class FlashcardController {
     @GetUser() user: Users,
     @Body() UpdateFlashcardDto: UpdateFlashcardDto,
   ): Promise<{ message: string }> {
-    this.flashcardService.updateFlashcard(user, UpdateFlashcardDto);
-    return { message: 'success' };
+    try {
+      await this.flashcardService.updateFlashcard(user, UpdateFlashcardDto);
+      return { message: 'success' };
+    } catch (error) {
+      throw error;
+    }
   }
 
   @Delete('/flashcard')
