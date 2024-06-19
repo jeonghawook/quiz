@@ -10,8 +10,8 @@ import { Users } from 'src/users/entity/users.entity';
 export class PostService {
   constructor(private readonly postRepository: PostRepository) {}
 
-  async getAllPosts() {
-    return await this.postRepository.getAllPosts();
+  async getAllPosts(user: Users) {
+    return await this.postRepository.getAllPosts(user);
   }
 
   async validateUserPost(categoryId: number, postId: number, user: Users) {
@@ -45,11 +45,13 @@ export class PostService {
     return flahscardOnly;
   }
 
-  async updateLike(postLikeInfoDto: any) {
-    return await this.postRepository.updateLike(postLikeInfoDto);
+  async updateLike(postId: number, postLikeInfoDto) {
+    return await this.postRepository.updateLike(postId, postLikeInfoDto);
   }
 
-  async createPost(createPostDto: any) {
+  async createPost(createPostDto: any, user: Users) {
+    createPostDto.userId = user.userId;
+
     return await this.postRepository.createPost(createPostDto);
   }
 
@@ -59,5 +61,14 @@ export class PostService {
 
   async getPostWithComment(postId: number, user: Users) {
     return await this.postRepository.getPostWithComment(postId);
+  }
+
+  async validatePostExistence(categoryId: number) {
+    const post = await this.postRepository.validatePostExistence(categoryId);
+    if (post) {
+      throw new ConflictException(
+        '이미 커뮤니티에 존재하는 있는 카테고리 입니다',
+      );
+    }
   }
 }

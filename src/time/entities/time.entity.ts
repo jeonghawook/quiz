@@ -33,6 +33,7 @@ export class Time {
     | 'comment';
 
   @ManyToOne(() => Users, (users) => users.time, {
+    cascade: true,
     onDelete: 'CASCADE',
   })
   @JoinColumn({ name: 'userId' })

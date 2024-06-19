@@ -1,9 +1,10 @@
 import { ConflictException, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Post } from './entity/post.entity';
-import { Repository } from 'typeorm';
-import { UserToPost } from './entity/user-post.entity';
+import { Not, Repository } from 'typeorm';
 import { Category } from 'src/flashcard/entity/category.entity';
+import { Users } from 'src/users/entity/users.entity';
+import { UserToPost } from './entity/user-post.entity';
 
 @Injectable()
 export class PostRepository {
@@ -21,6 +22,7 @@ export class PostRepository {
       userId,
     });
   }
+
   async myPostValidation(categoryId: number, userId: number) {
     return await this.categoryRepository.findOneBy({
       categoryId,
@@ -28,8 +30,12 @@ export class PostRepository {
     });
   }
 
-  async getAllPosts() {
-    return await this.postRepository.find();
+  async getAllPosts(user: Users) {
+    return await this.postRepository.find({
+      order: {
+        likes: 'DESC',
+      },
+    });
   }
 
   async getFlashcardofPost(postId: number) {
@@ -39,28 +45,21 @@ export class PostRepository {
     });
   }
 
-  async updateLike(postLikeInfoDto: any) {
+  async updateLike(postId: number, postLikeInfoDto) {
     if (postLikeInfoDto.like) {
-      await this.postRepository.increment(
-        { postId: postLikeInfoDto.postId },
-        'likes',
-        1,
-      );
+      await this.postRepository.increment({ postId }, 'likes', 1);
     } else {
-      await this.postRepository.decrement(
-        { postId: postLikeInfoDto.postId },
-        'likes',
-        1,
-      );
+      await this.postRepository.decrement({ postId }, 'likes', 1);
     }
   }
   async createPost(createPostDto: any) {
+    console.log(createPostDto);
     try {
       const newPost = this.postRepository.create(createPostDto);
       return await this.postRepository.save(newPost);
     } catch (error) {
       if (error.code === '23505') {
-        throw new ConflictException('이미 커뮤니티에 올라간 덱 입니다');
+        throw new ConflictException('이미 커뮤니티에 존재하는 제목입니다');
       }
     }
   }
@@ -79,6 +78,12 @@ export class PostRepository {
     return await this.postRepository.findOne({
       where: { postId },
       relations: ['comment'],
+    });
+  }
+
+  async validatePostExistence(categoryId: number) {
+    return await this.postRepository.findOneBy({
+      categoryId,
     });
   }
 }

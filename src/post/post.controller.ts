@@ -17,10 +17,23 @@ import { GetUser } from 'src/users/common/decorators';
 export class PostController {
   constructor(private readonly postService: PostService) {}
 
-  @Get('/')
-  async getAllPosts() {
+  @UseGuards(AtGuard)
+  @Get('validate/:categoryId')
+  async validatePostExistence(
+    @Param('categoryId', ParseIntPipe) categoryId: number,
+  ) {
     try {
-      return await this.postService.getAllPosts();
+      return await this.postService.validatePostExistence(categoryId);
+    } catch (error) {
+      throw error;
+    }
+  }
+
+  @Get('/')
+  @UseGuards(AtGuard)
+  async getAllPosts(@GetUser() user: Users) {
+    try {
+      return await this.postService.getAllPosts(user);
     } catch (error) {
       throw error;
     }
@@ -67,18 +80,22 @@ export class PostController {
   }
 
   @Post('/:postId/like')
-  async updateLike(@Body() postLikeInfoDto: any) {
+  async updateLike(
+    @Param('postId', ParseIntPipe) postId: number,
+    @Body() postLikeInfoDto: any,
+  ) {
     try {
-      return await this.postService.updateLike(postLikeInfoDto);
+      return await this.postService.updateLike(postId, postLikeInfoDto);
     } catch (error) {
       throw error;
     }
   }
 
+  @UseGuards(AtGuard)
   @Post('/')
-  async createPost(@Body() createPostDto: any) {
+  async createPost(@GetUser() user: Users, @Body() createPostDto: any) {
     try {
-      return await this.postService.createPost(createPostDto);
+      return await this.postService.createPost(createPostDto, user);
     } catch (error) {
       throw error;
     }

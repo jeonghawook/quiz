@@ -10,6 +10,7 @@ import {
 import { Category } from '../../flashcard/entity/category.entity';
 import { Time } from 'src/time/entities/time.entity';
 import { UserToPost } from 'src/post/entity/user-post.entity';
+import { Post } from 'src/post/entity/post.entity';
 
 @Entity()
 export class Users {
@@ -54,10 +55,7 @@ export class Users {
   })
   categories: Category[];
 
-  @OneToMany(() => Time, (time) => time.users, {
-    cascade: true,
-    onDelete: 'CASCADE',
-  })
+  @OneToMany(() => Time, (time) => time.users)
   time: Time[];
 
   @Column({ default: 0 })
@@ -68,4 +66,7 @@ export class Users {
 
   @CreateDateColumn({ type: 'timestamp' })
   createdAt: Date;
+
+  @OneToMany(() => Post, (post) => post.user)
+  post: Post[];
 }

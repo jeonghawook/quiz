@@ -4,19 +4,21 @@ import {
   CreateDateColumn,
   Entity,
   JoinColumn,
+  ManyToOne,
   OneToMany,
   OneToOne,
   PrimaryGeneratedColumn,
 } from 'typeorm';
 import { UserToPost } from './user-post.entity';
 import { Comment } from 'src/post/entity/comment.entity';
+import { Users } from 'src/users/entity/users.entity';
 
 @Entity()
 export class Post {
   @PrimaryGeneratedColumn()
   postId: number;
 
-  @Column()
+  @Column({ unique: true })
   title: string;
 
   @Column()
@@ -46,4 +48,11 @@ export class Post {
 
   @CreateDateColumn({ type: 'timestamp' })
   createdAt: Date;
+
+  @ManyToOne(() => Users, (user) => user.post)
+  @JoinColumn({ name: 'userId' })
+  user: Users;
+
+  @Column()
+  userId: number;
 }
