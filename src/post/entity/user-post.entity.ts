@@ -6,10 +6,12 @@ import {
   JoinColumn,
   ManyToOne,
   PrimaryGeneratedColumn,
+  Unique,
 } from 'typeorm';
 import { Post } from './post.entity';
 
 @Entity()
+@Unique(['userId', 'postId'])
 export class UserToPost {
   @PrimaryGeneratedColumn()
   userToPostId: number;

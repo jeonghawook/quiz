@@ -1,14 +1,37 @@
 import {
+  BadRequestException,
   ConflictException,
   Injectable,
   UnauthorizedException,
 } from '@nestjs/common';
 import { PostRepository } from './post.repository';
 import { Users } from 'src/users/entity/users.entity';
+import { UsersRepository } from 'src/users/users.repository';
 
 @Injectable()
 export class PostService {
-  constructor(private readonly postRepository: PostRepository) {}
+  constructor(
+    private readonly postRepository: PostRepository,
+    private readonly usersRepository: UsersRepository,
+  ) {}
+
+  async purchaseFlashcardPost(purchaseInfo: any, user: Users) {
+    const userInfo = await this.usersRepository.getTotalTime(user);
+    if (!userInfo) {
+      throw new UnauthorizedException('who are you');
+    }
+
+    const postInfo = await this.postRepository.getPostInfo(purchaseInfo.postId);
+    if (userInfo.totalTime < postInfo.pointsRequired) {
+      throw new BadRequestException('시간이 부족합니다');
+    }
+
+    await this.postRepository.purchaseFlashcardPostAndDecrementUserTime(
+      purchaseInfo,
+      postInfo,
+      user,
+    );
+  }
 
   async getAllPosts(user: Users) {
     return await this.postRepository.getAllPosts(user);

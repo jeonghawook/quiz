@@ -1,10 +1,11 @@
 import { ConflictException, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Post } from './entity/post.entity';
-import { Not, Repository } from 'typeorm';
+import { DataSource, Not, Repository } from 'typeorm';
 import { Category } from 'src/flashcard/entity/category.entity';
 import { Users } from 'src/users/entity/users.entity';
 import { UserToPost } from './entity/user-post.entity';
+import { Time } from 'src/time/entities/time.entity';
 
 @Injectable()
 export class PostRepository {
@@ -14,13 +15,20 @@ export class PostRepository {
     private readonly userToPostRepository: Repository<UserToPost>,
     @InjectRepository(Category)
     private readonly categoryRepository: Repository<Category>,
+    private readonly dataSource: DataSource,
   ) {}
 
   async puchaseValidation(postId: number, userId: number) {
+    console.log(postId, userId);
     return await this.userToPostRepository.findOneBy({
       postId,
       userId,
     });
+  }
+
+  async getPostInfo(postId: any) {
+    console.log(postId);
+    return await this.postRepository.findOneBy({ postId });
   }
 
   async myPostValidation(categoryId: number, userId: number) {
@@ -84,6 +92,31 @@ export class PostRepository {
   async validatePostExistence(categoryId: number) {
     return await this.postRepository.findOneBy({
       categoryId,
+    });
+  }
+
+  async purchaseFlashcardPostAndDecrementUserTime(
+    purchaseInfo: any,
+    postInfo: Post,
+    user: Users,
+  ) {
+    await this.dataSource.transaction(async (transactionalEntityManager) => {
+      await transactionalEntityManager.decrement(
+        Users,
+        { userId: user.userId },
+        'totalTime',
+        postInfo.pointsRequired,
+      );
+      const userToPost = new UserToPost();
+      userToPost.postId = postInfo.postId;
+      userToPost.userId = user.userId;
+      await transactionalEntityManager.save(userToPost);
+
+      const time = new Time();
+      time.timeUsed = postInfo.pointsRequired;
+      time.userId = user.userId;
+      time.timeTransactionInfo = purchaseInfo.transactionDetails;
+      await transactionalEntityManager.save(time);
     });
   }
 }

@@ -8,13 +8,18 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Users } from './entity/users.entity';
 
-Injectable();
-
+@Injectable()
 export class UsersRepository {
   constructor(@InjectRepository(Users) private users: Repository<Users>) {}
 
   async findUserWithinServer(userEmail: string) {
     return await this.users.findOne({ where: { userEmail } });
+  }
+
+  async getTotalTime(user: Users) {
+    return await this.users.findOneBy({
+      userId: user.userId,
+    });
   }
 
   async socialSignUp(userEmail: string, nickname: string) {

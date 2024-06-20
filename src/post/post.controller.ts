@@ -66,7 +66,6 @@ export class PostController {
     }
   }
 
-  @UseGuards(AtGuard)
   @Get('/:postId')
   async getFlashcardofPost(
     @GetUser() user: Users,
@@ -74,6 +73,19 @@ export class PostController {
   ) {
     try {
       return await this.postService.getFlashcardofPost(postId, user);
+    } catch (error) {
+      throw error;
+    }
+  }
+
+  @UseGuards(AtGuard)
+  @Post('/purchase')
+  async purchaseFlashcardPost(
+    @GetUser() user: Users,
+    @Body() purchaseInfo: any,
+  ) {
+    try {
+      return await this.postService.purchaseFlashcardPost(purchaseInfo, user);
     } catch (error) {
       throw error;
     }

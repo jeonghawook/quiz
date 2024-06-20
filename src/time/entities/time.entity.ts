@@ -19,18 +19,8 @@ export class Time {
   @Column({ nullable: true })
   timeUsed: number;
 
-  @Column({
-    type: 'enum',
-    enum: ['google', 'ios', 'study', 'likes', 'purchase', 'comment'],
-    nullable: true,
-  })
-  timeTransactionInfo:
-    | 'google'
-    | 'ios'
-    | 'study'
-    | 'likes'
-    | 'purchase'
-    | 'comment';
+  @Column()
+  timeTransactionInfo: string;
 
   @ManyToOne(() => Users, (users) => users.time, {
     cascade: true,
@@ -44,4 +34,15 @@ export class Time {
 
   @CreateDateColumn({ type: 'timestamp' })
   createdAt: Date;
+
+  @Column({ nullable: true })
+  purchaseID: string;
+  @Column({ nullable: true })
+  productID: string;
+  @Column({ nullable: true })
+  verificationData: string;
+  @Column({ nullable: true })
+  transactionDate: Date;
+  @Column({ nullable: true })
+  status: string;
 }
