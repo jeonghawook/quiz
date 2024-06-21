@@ -7,7 +7,7 @@ import { Users } from 'src/users/entity/users.entity';
 @Injectable()
 export class TimeService {
   constructor(private readonly timeRepository: TimeRepository) {}
-  async chargeTime(createTimeDto: CreateTimeDto, user: Users) {
+  async chargeTime(createTimeDto: any, user: Users) {
     return await this.timeRepository.chargeTime(createTimeDto, user);
   }
 
