@@ -23,7 +23,6 @@ export class EmailService {
         console.log(result);
       })
       .catch((error) => {
-        console.log(1111111111);
         console.log(error);
       });
     return true;

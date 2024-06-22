@@ -30,17 +30,16 @@ export class PostController {
   }
 
   @Get('/')
-  @UseGuards(AtGuard)
-  async getAllPosts(@GetUser() user: Users) {
+  async getAllPosts() {
     try {
-      return await this.postService.getAllPosts(user);
+      return await this.postService.getAllPosts();
     } catch (error) {
       throw error;
     }
   }
 
   @UseGuards(AtGuard)
-  @Get('/:postId/comment')
+  @Get('/details/:postId')
   async getPostWithComment(
     @GetUser() user: Users,
     @Param('postId', ParseIntPipe) postId: number,
@@ -98,6 +97,20 @@ export class PostController {
   ) {
     try {
       return await this.postService.updateLike(postId, postLikeInfoDto);
+    } catch (error) {
+      throw error;
+    }
+  }
+
+  @UseGuards(AtGuard)
+  @Post('/:postId/comment')
+  async createComment(
+    @GetUser() user: Users,
+    @Param('postId', ParseIntPipe) postId: number,
+    @Body() commentDto: any,
+  ) {
+    try {
+      return await this.postService.createComment(postId, commentDto, user);
     } catch (error) {
       throw error;
     }

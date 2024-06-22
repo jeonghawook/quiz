@@ -20,6 +20,9 @@ export class Comment {
   userId: number;
 
   @Column()
+  nickname: string;
+
+  @Column()
   postId: number;
 
   @Column({ default: 0 })

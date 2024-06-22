@@ -33,8 +33,8 @@ export class PostService {
     );
   }
 
-  async getAllPosts(user: Users) {
-    return await this.postRepository.getAllPosts(user);
+  async getAllPosts() {
+    return await this.postRepository.getAllPosts();
   }
 
   async validateUserPost(categoryId: number, postId: number, user: Users) {
@@ -93,5 +93,12 @@ export class PostService {
         '이미 커뮤니티에 존재하는 있는 카테고리 입니다',
       );
     }
+  }
+
+  async createComment(postId: number, commentDto: any, user: Users) {
+    commentDto.userId = user.userId;
+    commentDto.postId = postId;
+    commentDto.nickname = user.nickname;
+    return await this.postRepository.createComment(commentDto);
   }
 }

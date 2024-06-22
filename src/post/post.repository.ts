@@ -6,6 +6,7 @@ import { Category } from 'src/flashcard/entity/category.entity';
 import { Users } from 'src/users/entity/users.entity';
 import { UserToPost } from './entity/user-post.entity';
 import { Time } from 'src/time/entities/time.entity';
+import { Comment } from './entity/comment.entity';
 
 @Injectable()
 export class PostRepository {
@@ -15,11 +16,12 @@ export class PostRepository {
     private readonly userToPostRepository: Repository<UserToPost>,
     @InjectRepository(Category)
     private readonly categoryRepository: Repository<Category>,
+    @InjectRepository(Comment)
+    private readonly commentRepository: Repository<Comment>,
     private readonly dataSource: DataSource,
   ) {}
 
   async puchaseValidation(postId: number, userId: number) {
-    console.log(postId, userId);
     return await this.userToPostRepository.findOneBy({
       postId,
       userId,
@@ -27,7 +29,6 @@ export class PostRepository {
   }
 
   async getPostInfo(postId: any) {
-    console.log(postId);
     return await this.postRepository.findOneBy({ postId });
   }
 
@@ -38,7 +39,7 @@ export class PostRepository {
     });
   }
 
-  async getAllPosts(user: Users) {
+  async getAllPosts() {
     return await this.postRepository.find({
       order: {
         likes: 'DESC',
@@ -118,5 +119,10 @@ export class PostRepository {
       time.timeTransactionInfo = purchaseInfo.transactionDetails;
       await transactionalEntityManager.save(time);
     });
+  }
+
+  async createComment(commentDto: any) {
+    const commentInfo = this.commentRepository.create(commentDto);
+    await this.commentRepository.save(commentInfo);
   }
 }

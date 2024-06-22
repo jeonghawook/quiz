@@ -5,30 +5,34 @@ import {
 } from '@nestjs/common';
 import { LoginDto, PasswordDto, SignupDto } from './dtos/users-dtos';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { DataSource, Repository } from 'typeorm';
 import { Users } from './entity/users.entity';
+import { Time } from 'src/time/entities/time.entity';
 
 @Injectable()
 export class UsersRepository {
-  constructor(@InjectRepository(Users) private users: Repository<Users>) {}
+  constructor(
+    @InjectRepository(Users) private usersRepository: Repository<Users>,
+    private readonly dataSource: DataSource,
+  ) {}
 
   async findUserWithinServer(userEmail: string) {
-    return await this.users.findOne({ where: { userEmail } });
+    return await this.usersRepository.findOne({ where: { userEmail } });
   }
 
   async getTotalTime(user: Users) {
-    return await this.users.findOneBy({
+    return await this.usersRepository.findOneBy({
       userId: user.userId,
     });
   }
 
   async socialSignUp(userEmail: string, nickname: string) {
     try {
-      const user = this.users.create({
+      const user = this.usersRepository.create({
         userEmail: userEmail,
         nickname: nickname,
       });
-      await this.users.save(user);
+      await this.usersRepository.save(user);
       return user;
     } catch (error) {
       console.log(error);
@@ -36,19 +40,19 @@ export class UsersRepository {
   }
 
   async findEmail(userEmail: string): Promise<Users> {
-    return await this.users.findOne({ where: { userEmail } });
+    return await this.usersRepository.findOne({ where: { userEmail } });
   }
 
   async signup(signupDto: SignupDto, hashedPassword: string): Promise<void> {
     try {
-      const user = this.users.create({
+      const user = this.usersRepository.create({
         userEmail: signupDto.userEmail,
         nickname: signupDto.nickname,
         userName: signupDto.userName,
         password: hashedPassword,
       });
 
-      await this.users.save(user);
+      await this.usersRepository.save(user);
     } catch (error) {
       if (error.code === '23505') {
         if (error.constraint === 'UQ_9047b2d58f91586f14f0cf44a45') {
@@ -63,7 +67,7 @@ export class UsersRepository {
 
   async refreshToken(userId: number): Promise<string> {
     try {
-      const user = await this.users.findOne({
+      const user = await this.usersRepository.findOne({
         where: { userId },
         select: ['refreshToken'],
       });
@@ -74,15 +78,15 @@ export class UsersRepository {
   }
 
   async removeRefreshToken(userId: number): Promise<void> {
-    await this.users.update({ userId }, { refreshToken: null });
+    await this.usersRepository.update({ userId }, { refreshToken: null });
   }
 
   async setRefreshToken(userId: number, refreshToken: string) {
-    await this.users.update({ userId }, { refreshToken });
+    await this.usersRepository.update({ userId }, { refreshToken });
   }
 
   async getProfile(user: Users) {
-    return await this.users.findOneOrFail({
+    return await this.usersRepository.findOneOrFail({
       select: {
         userEmail: true,
         nickname: true,
@@ -94,22 +98,44 @@ export class UsersRepository {
   }
 
   async changePassword(user: Users, hashedPassword: string) {
-    return await this.users.update(
+    return await this.usersRepository.update(
       { userId: user.userId },
       { password: hashedPassword },
     );
   }
 
   async confirmEmailVerification(user: Users) {
-    return await this.users.update(
-      { userId: user.userId },
-      { emailVerificationStatus: true },
+    return await this.dataSource.transaction(
+      async (transactionalEntityManager) => {
+        await transactionalEntityManager.update(
+          Users,
+          { userId: user.userId },
+          { emailVerificationStatus: true },
+        );
+        const time = new Time();
+        time.userId = user.userId;
+        time.timeCharged = 50;
+        time.timeTransactionInfo = 'email-varification';
+
+        const timeInfo = transactionalEntityManager.create(Time);
+        await transactionalEntityManager.save(Time, time);
+
+        await transactionalEntityManager.increment(
+          Users,
+          { userId: user.userId },
+          'totalTime',
+          time.timeCharged,
+        );
+      },
     );
   }
 
   async changeNickname(user: Users, nickname: string) {
     try {
-      return await this.users.update({ userId: user.userId }, { nickname });
+      return await this.usersRepository.update(
+        { userId: user.userId },
+        { nickname },
+      );
     } catch (error) {
       if (error.code === '23505') {
         throw new ConflictException('이미 존재하는 닉네임 입니다');

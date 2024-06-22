@@ -8,9 +8,12 @@ import { UserToPost } from './entity/user-post.entity';
 import { Category } from 'src/flashcard/entity/category.entity';
 import { UsersRepository } from 'src/users/users.repository';
 import { Users } from 'src/users/entity/users.entity';
+import { Comment } from './entity/comment.entity';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([Post, UserToPost, Category, Users])],
+  imports: [
+    TypeOrmModule.forFeature([Post, UserToPost, Category, Users, Comment]),
+  ],
   providers: [PostService, UsersRepository, PostRepository],
   controllers: [PostController],
 })
