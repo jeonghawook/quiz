@@ -37,12 +37,13 @@ export class Time {
 
   @Column({ nullable: true })
   purchaseID: string;
+
   @Column({ nullable: true })
   productID: string;
+
   @Column({ nullable: true })
-  verificationData: string;
-  @Column({ nullable: true })
-  transactionDate: Date;
+  transactionDate: String;
+
   @Column({ nullable: true })
   status: string;
 }
