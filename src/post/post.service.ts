@@ -74,7 +74,8 @@ export class PostService {
 
   async createPost(createPostDto: any, user: Users) {
     createPostDto.userId = user.userId;
-
+    //intial point required
+    createPostDto.pointsRequired = 10;
     return await this.postRepository.createPost(createPostDto);
   }
 
