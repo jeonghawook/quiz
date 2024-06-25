@@ -62,7 +62,6 @@ export class PostRepository {
     }
   }
   async createPost(createPostDto: any) {
-    console.log(createPostDto);
     try {
       const newPost = this.postRepository.create(createPostDto);
       return await this.postRepository.save(newPost);

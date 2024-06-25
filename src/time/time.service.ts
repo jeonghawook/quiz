@@ -9,7 +9,6 @@ import { Time } from './entities/time.entity';
 export class TimeService {
   constructor(private readonly timeRepository: TimeRepository) {}
   async chargeTime(createTimeDto: any, user: Users) {
-    console.log(createTimeDto);
     const time = new Time();
 
     time.timeTransactionInfo = createTimeDto.purchaseID
