@@ -27,7 +27,7 @@ export class TimeService {
       time.timeCharged = parseInt(parts[1]) ?? null;
     }
 
-    return await this.timeRepository.chargeTime(time);
+    return await this.timeRepository.chargeTime(time, user);
   }
 
   findAll() {
