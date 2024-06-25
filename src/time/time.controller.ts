@@ -22,7 +22,6 @@ export class TimeController {
   @UseGuards(AtGuard)
   @Post('/')
   async chargeTIme(@GetUser() user: Users, @Body() createTimeDto: any) {
-    console.log(createTimeDto);
     return await this.timeService.chargeTime(createTimeDto, user);
   }
 

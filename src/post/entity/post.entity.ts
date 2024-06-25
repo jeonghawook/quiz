@@ -30,10 +30,7 @@ export class Post {
   @Column({ default: 0 })
   likes: number;
 
-  @OneToOne(() => Category, (category) => category.post, {
-    cascade: true,
-    onDelete: 'CASCADE',
-  })
+  @OneToOne(() => Category, (category) => category.post)
   @JoinColumn({ name: 'categoryId' })
   category: Category;
 

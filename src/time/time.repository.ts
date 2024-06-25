@@ -10,18 +10,7 @@ export class TimeRepository {
     @InjectRepository(Time) private readonly timeRepository: Repository<Time>,
   ) {}
 
-  async chargeTime(createTimeDto: any, user: any) {
-    const time = new Time();
-
-    createTimeDto.purchaseID
-      ? (time.timeTransactionInfo = 'in-app-purchase')
-      : (time.timeTransactionInfo = 'other');
-
-    time.productID = createTimeDto.productID;
-    time.transactionDate = createTimeDto.transactionDate;
-    time.purchaseID = createTimeDto.purchaseID;
-    time.status = createTimeDto.status;
-
+  async chargeTime(time: any) {
     const timeInfo = this.timeRepository.create(time);
     return await this.timeRepository.save(timeInfo);
   }

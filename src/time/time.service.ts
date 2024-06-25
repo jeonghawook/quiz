@@ -3,12 +3,31 @@ import { CreateTimeDto } from './dto/create-time.dto';
 import { UpdateTimeDto } from './dto/update-time.dto';
 import { TimeRepository } from './time.repository';
 import { Users } from 'src/users/entity/users.entity';
+import { Time } from './entities/time.entity';
 
 @Injectable()
 export class TimeService {
   constructor(private readonly timeRepository: TimeRepository) {}
   async chargeTime(createTimeDto: any, user: Users) {
-    return await this.timeRepository.chargeTime(createTimeDto, user);
+    const time = new Time();
+
+    time.timeTransactionInfo = createTimeDto.purchaseID
+      ? 'in-app-purchase'
+      : 'other';
+
+    time.transactionDate = createTimeDto.transactionDate ?? new Date();
+    time.purchaseID = createTimeDto.purchaseID ?? null;
+    time.status = createTimeDto.status ?? null;
+    time.verificationData = createTimeDto.verificationData ?? null;
+    time.userId = user.userId;
+
+    if (createTimeDto.productID) {
+      time.productID = createTimeDto.productID ?? null;
+      const parts = createTimeDto.productID.split('_');
+      time.timeCharged = parseInt(parts[1]) ?? null;
+    }
+
+    return await this.timeRepository.chargeTime(time);
   }
 
   findAll() {
