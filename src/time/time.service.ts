@@ -9,6 +9,7 @@ import { Time } from './entities/time.entity';
 export class TimeService {
   constructor(private readonly timeRepository: TimeRepository) {}
   async chargeTime(createTimeDto: any, user: Users) {
+    console.log(createTimeDto);
     const time = new Time();
 
     time.timeTransactionInfo = createTimeDto.purchaseID
@@ -18,7 +19,6 @@ export class TimeService {
     time.transactionDate = createTimeDto.transactionDate ?? new Date();
     time.purchaseID = createTimeDto.purchaseID ?? null;
     time.status = createTimeDto.status ?? null;
-    time.verificationData = createTimeDto.verificationData ?? null;
     time.userId = user.userId;
 
     if (createTimeDto.productID) {
