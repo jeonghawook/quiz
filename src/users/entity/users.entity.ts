@@ -67,6 +67,9 @@ export class Users {
   @CreateDateColumn({ type: 'timestamp' })
   createdAt: Date;
 
+  @Column({ default: 3 })
+  availableCategory: number;
+
   @OneToMany(() => Post, (post) => post.user)
   post: Post[];
 }

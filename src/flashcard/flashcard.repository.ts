@@ -2,12 +2,13 @@ import mongoose, { Model } from 'mongoose';
 
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { In, Repository } from 'typeorm';
+import { DataSource, In, Repository } from 'typeorm';
 import { Flashcard } from './entity/flashcard.entity';
 import { Users } from '../users/entity/users.entity';
 import { CreateFlashcardDto } from './dtos/flashcard-dtos';
 import { Category } from './entity/category.entity';
 import { UpdateCategoryDto } from './dtos/category-dtos';
+import { Time } from 'src/time/entities/time.entity';
 
 @Injectable()
 export class FlashcardRepository {
@@ -16,6 +17,7 @@ export class FlashcardRepository {
     private flashcardRepository: Repository<Flashcard>,
     @InjectRepository(Category)
     private categoryRepository: Repository<Category>,
+    private readonly dataSource: DataSource,
   ) {}
 
   getCategory(users) {
@@ -82,5 +84,30 @@ export class FlashcardRepository {
     return this.flashcardRepository.delete({
       flashcardId: In(flashcardIds.flashcardIds),
     });
+  }
+
+  async incrementAvailableCategory(user: Users) {
+    return await this.dataSource.transaction(
+      async (transactionalEntityManager) => {
+        await transactionalEntityManager.increment(
+          Users,
+          { userId: user.userId },
+          'availableCategory',
+          1,
+        );
+
+        await transactionalEntityManager.decrement(
+          Users,
+          { userId: user.userId },
+          'totalTime',
+          10,
+        );
+        const time = new Time();
+        time.userId = user.userId;
+        time.timeUsed = 10;
+        time.timeTransactionInfo = 'add categoryAvailability';
+        await transactionalEntityManager.save(time);
+      },
+    );
   }
 }

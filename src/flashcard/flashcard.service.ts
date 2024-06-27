@@ -3,21 +3,33 @@ import { FlashcardRepository } from './flashcard.repository';
 import { CreateFlashcardDto, UpdateFlashcardDto } from './dtos/flashcard-dtos';
 import { Users } from 'src/users/entity/users.entity';
 import { Flashcard } from './entity/flashcard.entity';
+import { UsersRepository } from 'src/users/users.repository';
 
 @Injectable()
 export class FlashcardService {
-  constructor(private flashcardRepository: FlashcardRepository) {}
+  constructor(
+    private flashcardRepository: FlashcardRepository,
+    private readonly userRepository: UsersRepository,
+  ) {}
 
   async getCategory(users) {
     return await this.flashcardRepository.getCategory(users);
   }
+
   async createCategory(users, createCategoryDto) {
     const category = await this.flashcardRepository.getCategory(users);
     if (category.find((data) => createCategoryDto.name === data.name)) {
       throw new BadRequestException('이미 있는 카테고리 입니다');
     }
-    if (category.length >= 3)
-      throw new BadRequestException('3개 이상 카테고리는 만들수 없습니다');
+    const user = await this.userRepository.findUserWithinServer(
+      users.userEmail,
+    );
+
+    if (category.length > user.availableCategory) {
+      throw new BadRequestException(
+        `${user.availableCategory} 이상 카테고리는 만들수 없습니다`,
+      );
+    }
 
     return await this.flashcardRepository.createCategory(
       users,
@@ -71,5 +83,15 @@ export class FlashcardService {
   async deleteFlashcard(user, flashcardIds): Promise<string> {
     await this.flashcardRepository.deleteFlashcard(flashcardIds);
     return;
+  }
+
+  async incrementAvailableCategory(user: Users) {
+    const userInfo = await this.userRepository.findUserWithinServer(user);
+    if (userInfo.totalTime < 10) {
+      throw new BadRequestException(
+        '시간이 부족합니다 "커뮤니티"에서 시간을 모아주세요',
+      );
+    }
+    return await this.flashcardRepository.incrementAvailableCategory(user);
   }
 }

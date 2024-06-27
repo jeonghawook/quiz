@@ -16,7 +16,7 @@ export class PostService {
   ) {}
 
   async purchaseFlashcardPost(purchaseInfo: any, user: Users) {
-    const userInfo = await this.usersRepository.getTotalTime(user);
+    const userInfo = await this.usersRepository.findUserWithinServer(user);
     if (!userInfo) {
       throw new UnauthorizedException('who are you');
     }

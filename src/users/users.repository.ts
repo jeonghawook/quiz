@@ -16,13 +16,9 @@ export class UsersRepository {
     private readonly dataSource: DataSource,
   ) {}
 
-  async findUserWithinServer(userEmail: string) {
-    return await this.usersRepository.findOne({ where: { userEmail } });
-  }
-
-  async getTotalTime(user: Users) {
-    return await this.usersRepository.findOneBy({
-      userId: user.userId,
+  async findUserWithinServer(user: Users) {
+    return await this.usersRepository.findOne({
+      where: { userId: user.userId },
     });
   }
 

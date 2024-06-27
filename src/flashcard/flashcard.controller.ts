@@ -133,4 +133,14 @@ export class FlashcardController {
       throw new BadRequestException('cannot delete flashcards');
     }
   }
+
+  @UseGuards(AtGuard)
+  @Get('/availableCategory')
+  async incrementAvailableCategory(@GetUser() user: Users) {
+    try {
+      return await this.flashcardService.incrementAvailableCategory(user);
+    } catch (error) {
+      throw error;
+    }
+  }
 }

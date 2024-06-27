@@ -147,9 +147,7 @@ export class UsersService {
   }
 
   async changePassword(user: Users, passwordDto: PasswordDto) {
-    const { password } = await this.userRepository.findUserWithinServer(
-      user.userEmail,
-    );
+    const { password } = await this.userRepository.findUserWithinServer(user);
     const checkPassword = await bcrypt.compare(
       passwordDto.currentPassword,
       password,
@@ -164,9 +162,7 @@ export class UsersService {
   }
 
   async changeNickname(user: Users, nickname: string) {
-    const userInfo = await this.userRepository.findUserWithinServer(
-      user.userEmail,
-    );
+    const userInfo = await this.userRepository.findUserWithinServer(user);
     if (!userInfo) {
       throw new UnauthorizedException('없는 회원입니다');
     }
