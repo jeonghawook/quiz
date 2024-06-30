@@ -22,9 +22,12 @@ export class UserToPost {
   @Column()
   postId: number;
 
+  @Column({ default: false })
+  like: boolean;
+
   @ManyToOne(() => Users, (users) => users.userToPost, {
-    cascade: true, // Or specifically ['insert', 'update']
-    onDelete: 'CASCADE', // This ensures that deleting a Category deletes all related Flashcards
+    cascade: true,
+    onDelete: 'CASCADE',
   })
   @JoinColumn({ name: 'userId' })
   user: Users;

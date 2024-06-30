@@ -52,6 +52,46 @@ export class PostController {
   }
 
   @UseGuards(AtGuard)
+  @Get('/like/:postId')
+  async updateLike(
+    @Param('postId', ParseIntPipe) postId: number,
+    @GetUser() user: Users,
+  ) {
+    try {
+      return await this.postService.updateLike(postId, user);
+    } catch (error) {
+      throw error;
+    }
+  }
+
+  @UseGuards(AtGuard)
+  @Post('/purchase')
+  async purchaseFlashcardPost(
+    @GetUser() user: Users,
+    @Body() purchaseInfo: any,
+  ) {
+    try {
+      return await this.postService.purchaseFlashcardPost(purchaseInfo, user);
+    } catch (error) {
+      throw error;
+    }
+  }
+
+  @UseGuards(AtGuard)
+  @Post('/:postId/comment')
+  async createComment(
+    @GetUser() user: Users,
+    @Param('postId', ParseIntPipe) postId: number,
+    @Body() commentDto: any,
+  ) {
+    try {
+      return await this.postService.createComment(postId, commentDto, user);
+    } catch (error) {
+      throw error;
+    }
+  }
+
+  @UseGuards(AtGuard)
   @Get('/:categoryId/:postId')
   async validateUserPost(
     @GetUser() user: Users,
@@ -72,45 +112,6 @@ export class PostController {
   ) {
     try {
       return await this.postService.getFlashcardofPost(postId, user);
-    } catch (error) {
-      throw error;
-    }
-  }
-
-  @UseGuards(AtGuard)
-  @Post('/purchase')
-  async purchaseFlashcardPost(
-    @GetUser() user: Users,
-    @Body() purchaseInfo: any,
-  ) {
-    try {
-      return await this.postService.purchaseFlashcardPost(purchaseInfo, user);
-    } catch (error) {
-      throw error;
-    }
-  }
-
-  @Post('/:postId/like')
-  async updateLike(
-    @Param('postId', ParseIntPipe) postId: number,
-    @Body() postLikeInfoDto: any,
-  ) {
-    try {
-      return await this.postService.updateLike(postId, postLikeInfoDto);
-    } catch (error) {
-      throw error;
-    }
-  }
-
-  @UseGuards(AtGuard)
-  @Post('/:postId/comment')
-  async createComment(
-    @GetUser() user: Users,
-    @Param('postId', ParseIntPipe) postId: number,
-    @Body() commentDto: any,
-  ) {
-    try {
-      return await this.postService.createComment(postId, commentDto, user);
     } catch (error) {
       throw error;
     }

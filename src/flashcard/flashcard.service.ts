@@ -24,8 +24,7 @@ export class FlashcardService {
     const user = await this.userRepository.findUserWithinServer(
       users.userEmail,
     );
-
-    if (category.length > user.availableCategory) {
+    if (category.length >= user.availableCategory) {
       throw new BadRequestException(
         `${user.availableCategory} 이상 카테고리는 만들수 없습니다`,
       );

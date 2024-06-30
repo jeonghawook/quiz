@@ -26,10 +26,15 @@ export class PostService {
       throw new BadRequestException('시간이 부족합니다');
     }
 
+    const flashcardInfo = await this.postRepository.getFlashcardofPost(
+      postInfo.postId,
+    );
+
     await this.postRepository.purchaseFlashcardPostAndDecrementUserTime(
       purchaseInfo,
       postInfo,
       user,
+      flashcardInfo.category.flashcards,
     );
   }
 
@@ -68,13 +73,15 @@ export class PostService {
     return flahscardOnly;
   }
 
-  async updateLike(postId: number, postLikeInfoDto) {
-    return await this.postRepository.updateLike(postId, postLikeInfoDto);
+  async updateLike(postId: number, user: Users) {
+    const postLike = await this.postRepository.validateLike(postId, user);
+    await this.postRepository.updateLike(postId, postLike);
+
+    return postLike;
   }
 
   async createPost(createPostDto: any, user: Users) {
     createPostDto.userId = user.userId;
-    //intial point required
     createPostDto.pointsRequired = 10;
     return await this.postRepository.createPost(createPostDto);
   }
@@ -84,7 +91,14 @@ export class PostService {
   }
 
   async getPostWithComment(postId: number, user: Users) {
-    return await this.postRepository.getPostWithComment(postId);
+    const postWithContent = await this.postRepository.getPostWithComment(
+      postId,
+    );
+
+    return {
+      ...postWithContent,
+      owner: postWithContent.userId === user.userId,
+    };
   }
 
   async validatePostExistence(categoryId: number) {

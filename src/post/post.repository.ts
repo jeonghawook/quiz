@@ -1,12 +1,14 @@
 import { ConflictException, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Post } from './entity/post.entity';
-import { DataSource, Not, Repository } from 'typeorm';
+import { DataSource, Like, Not, Repository } from 'typeorm';
 import { Category } from 'src/flashcard/entity/category.entity';
 import { Users } from 'src/users/entity/users.entity';
 import { UserToPost } from './entity/user-post.entity';
 import { Time } from 'src/time/entities/time.entity';
 import { Comment } from './entity/comment.entity';
+import { Flashcard } from 'src/flashcard/entity/flashcard.entity';
+import { link } from 'fs';
 
 @Injectable()
 export class PostRepository {
@@ -54,13 +56,40 @@ export class PostRepository {
     });
   }
 
-  async updateLike(postId: number, postLikeInfoDto) {
-    if (postLikeInfoDto.like) {
-      await this.postRepository.increment({ postId }, 'likes', 1);
-    } else {
-      await this.postRepository.decrement({ postId }, 'likes', 1);
-    }
+  async updateLike(postId: number, postLike: any) {
+    return await this.dataSource.transaction(
+      async (transactionalEntityManager) => {
+        if (!postLike.like) {
+          await transactionalEntityManager.increment(
+            Post,
+            { postId },
+            'likes',
+            1,
+          );
+
+          return await transactionalEntityManager.update(
+            UserToPost,
+            { postId: postId },
+            { like: true },
+          );
+        } else {
+          await transactionalEntityManager.decrement(
+            Post,
+            { postId },
+            'likes',
+            1,
+          );
+
+          return await transactionalEntityManager.update(
+            UserToPost,
+            { postId: postId },
+            { like: false },
+          );
+        }
+      },
+    );
   }
+
   async createPost(createPostDto: any) {
     try {
       const newPost = this.postRepository.create(createPostDto);
@@ -99,6 +128,7 @@ export class PostRepository {
     purchaseInfo: any,
     postInfo: Post,
     user: Users,
+    flashcardInfo: any,
   ) {
     await this.dataSource.transaction(async (transactionalEntityManager) => {
       await transactionalEntityManager.decrement(
@@ -107,6 +137,14 @@ export class PostRepository {
         'totalTime',
         postInfo.pointsRequired,
       );
+
+      await transactionalEntityManager.increment(
+        Users,
+        { userId: user.userId },
+        'availableCategory',
+        1,
+      );
+
       const userToPost = new UserToPost();
       userToPost.postId = postInfo.postId;
       userToPost.userId = user.userId;
@@ -117,11 +155,29 @@ export class PostRepository {
       time.userId = user.userId;
       time.timeTransactionInfo = purchaseInfo.transactionDetails;
       await transactionalEntityManager.save(time);
+
+      const category = new Category();
+      category.name = postInfo.title;
+      category.userId = user.userId;
+      const savedCategory = await transactionalEntityManager.save(category);
+
+      const flashcard = new Flashcard();
+      flashcard.categoryId = savedCategory.categoryId;
+      flashcard.question = flashcardInfo[0].question;
+      flashcard.answer = flashcardInfo[0].answer;
+      await transactionalEntityManager.save(flashcard);
     });
   }
 
   async createComment(commentDto: any) {
     const commentInfo = this.commentRepository.create(commentDto);
     await this.commentRepository.save(commentInfo);
+  }
+
+  async validateLike(postId: number, user: Users) {
+    return await this.userToPostRepository.findOne({
+      select: { like: true },
+      where: { postId, userId: user.userId },
+    });
   }
 }
