@@ -21,9 +21,9 @@ export class FlashcardService {
     if (category.find((data) => createCategoryDto.name === data.name)) {
       throw new BadRequestException('이미 있는 카테고리 입니다');
     }
-    const user = await this.userRepository.findUserWithinServer(
-      users.userEmail,
-    );
+
+    const user = await this.userRepository.findUserWithinServer(users);
+
     if (category.length >= user.availableCategory) {
       throw new BadRequestException(
         `${user.availableCategory} 이상 카테고리는 만들수 없습니다`,
