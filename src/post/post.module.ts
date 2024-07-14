@@ -9,12 +9,26 @@ import { Category } from 'src/flashcard/entity/category.entity';
 import { UsersRepository } from 'src/users/users.repository';
 import { Users } from 'src/users/entity/users.entity';
 import { Comment } from './entity/comment.entity';
+import { FlashcardRepository } from 'src/flashcard/flashcard.repository';
+import { Flashcard } from 'src/flashcard/entity/flashcard.entity';
 
 @Module({
   imports: [
-    TypeOrmModule.forFeature([Post, UserToPost, Category, Users, Comment]),
+    TypeOrmModule.forFeature([
+      Post,
+      UserToPost,
+      Category,
+      Users,
+      Comment,
+      Flashcard,
+    ]),
   ],
-  providers: [PostService, UsersRepository, PostRepository],
+  providers: [
+    PostService,
+    UsersRepository,
+    PostRepository,
+    FlashcardRepository,
+  ],
   controllers: [PostController],
 })
 export class PostModule {}

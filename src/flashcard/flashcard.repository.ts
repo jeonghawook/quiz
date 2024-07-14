@@ -28,6 +28,13 @@ export class FlashcardRepository {
       select: ['categoryId', 'name'],
     });
   }
+
+  findOneCateoryForValidation(categoryId) {
+    return this.categoryRepository.findOneBy({
+      categoryId,
+    });
+  }
+
   createCategory(users, createCategoryDto) {
     return this.categoryRepository.save({
       name: createCategoryDto.name,

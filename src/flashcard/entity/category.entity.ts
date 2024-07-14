@@ -23,10 +23,13 @@ export class Category {
   @Column()
   name: string;
 
+  @Column({ default: false })
+  hasOwner: boolean;
+
   @ManyToOne(() => Users, (users) => users.categories, {
-    onDelete: 'CASCADE', // This ensures that deleting a User deletes all related Categories
+    onDelete: 'CASCADE',
   })
-  @JoinColumn({ name: 'userId' }) // Explicitly define the FK column if it doesn't follow TypeORM's convention
+  @JoinColumn({ name: 'userId' })
   users: Users;
 
   @OneToMany(() => Flashcard, (flashcard) => flashcard.category)

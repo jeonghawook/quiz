@@ -29,10 +29,11 @@ export class PostController {
     }
   }
 
+  @UseGuards(AtGuard)
   @Get('/')
-  async getAllPosts() {
+  async getAllPosts(@GetUser() user: Users) {
     try {
-      return await this.postService.getAllPosts();
+      return await this.postService.getAllPosts(user);
     } catch (error) {
       throw error;
     }

@@ -28,7 +28,7 @@ export class Post {
   pointsRequired: number;
 
   @Column({ default: 0 })
-  likes: number;
+  like: number;
 
   @OneToOne(() => Category, (category) => category.post)
   @JoinColumn({ name: 'categoryId' })

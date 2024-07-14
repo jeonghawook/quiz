@@ -43,9 +43,7 @@ export class PostRepository {
 
   async getAllPosts() {
     return await this.postRepository.find({
-      order: {
-        likes: 'DESC',
-      },
+      relations: ['userToPost'],
     });
   }
 
@@ -63,7 +61,7 @@ export class PostRepository {
           await transactionalEntityManager.increment(
             Post,
             { postId },
-            'likes',
+            'like',
             1,
           );
 
@@ -76,7 +74,7 @@ export class PostRepository {
           await transactionalEntityManager.decrement(
             Post,
             { postId },
-            'likes',
+            'like',
             1,
           );
 
@@ -159,13 +157,19 @@ export class PostRepository {
       const category = new Category();
       category.name = postInfo.title;
       category.userId = user.userId;
+      category.hasOwner = true;
+
       const savedCategory = await transactionalEntityManager.save(category);
 
       const flashcard = new Flashcard();
-      flashcard.categoryId = savedCategory.categoryId;
-      flashcard.question = flashcardInfo[0].question;
-      flashcard.answer = flashcardInfo[0].answer;
-      await transactionalEntityManager.save(flashcard);
+      const allFlashcard = flashcardInfo.map((data) => {
+        flashcard.categoryId = savedCategory.categoryId;
+        flashcard.question = data.question;
+        flashcard.answer = data.answer;
+        return flashcard;
+      });
+
+      await transactionalEntityManager.save(allFlashcard);
     });
   }
 

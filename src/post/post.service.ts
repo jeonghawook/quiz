@@ -7,12 +7,14 @@ import {
 import { PostRepository } from './post.repository';
 import { Users } from 'src/users/entity/users.entity';
 import { UsersRepository } from 'src/users/users.repository';
+import { FlashcardRepository } from 'src/flashcard/flashcard.repository';
 
 @Injectable()
 export class PostService {
   constructor(
     private readonly postRepository: PostRepository,
     private readonly usersRepository: UsersRepository,
+    private readonly flashcardRepository: FlashcardRepository,
   ) {}
 
   async purchaseFlashcardPost(purchaseInfo: any, user: Users) {
@@ -30,6 +32,10 @@ export class PostService {
       postInfo.postId,
     );
 
+    if (flashcardInfo.category.flashcards.length === 0) {
+      throw new BadRequestException('내용이 없습니다 다음에 와주세요');
+    }
+
     await this.postRepository.purchaseFlashcardPostAndDecrementUserTime(
       purchaseInfo,
       postInfo,
@@ -38,8 +44,33 @@ export class PostService {
     );
   }
 
-  async getAllPosts() {
-    return await this.postRepository.getAllPosts();
+  async getAllPosts(user: Users) {
+    const userPosts = [];
+    const otherPosts = [];
+
+    const allPosts = await this.postRepository.getAllPosts();
+
+    allPosts.forEach((data) => {
+      const { userToPost, ...postData } = data;
+      if (
+        data.userId === user.userId ||
+        data.userToPost.find((post) => post.userId === user.userId)
+      ) {
+        const lockedPostData = {
+          ...postData,
+          locked: false,
+        };
+        userPosts.push(lockedPostData);
+      } else {
+        const lockedPostData = {
+          ...postData,
+          locked: true,
+        };
+        otherPosts.push(lockedPostData);
+      }
+    });
+    otherPosts.sort((a, b) => b.likes - a.likes);
+    return { userPosts: userPosts, otherPosts: otherPosts };
   }
 
   async validateUserPost(categoryId: number, postId: number, user: Users) {
@@ -75,8 +106,10 @@ export class PostService {
 
   async updateLike(postId: number, user: Users) {
     const postLike = await this.postRepository.validateLike(postId, user);
+    if (!postLike) {
+      throw new BadRequestException('본인 글은 좋아요가 불가능합니다');
+    }
     await this.postRepository.updateLike(postId, postLike);
-
     return postLike;
   }
 
@@ -102,6 +135,12 @@ export class PostService {
   }
 
   async validatePostExistence(categoryId: number) {
+    const category = await this.flashcardRepository.findOneCateoryForValidation(
+      categoryId,
+    );
+    if (category.hasOwner === true) {
+      throw new ConflictException('남의 것은 공부용으로 사용합시다');
+    }
     const post = await this.postRepository.validatePostExistence(categoryId);
     if (post) {
       throw new ConflictException(
